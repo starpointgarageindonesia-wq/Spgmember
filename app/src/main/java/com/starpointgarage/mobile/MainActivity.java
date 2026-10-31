@@ -475,10 +475,17 @@ public class MainActivity extends Activity {
                 && android.os.SystemClock.elapsedRealtime() - lastBackgroundAt >= 800
                 && pendingPaymentFileChooser == null && pendingCameraRequest == null
                 && android.os.SystemClock.elapsedRealtime() - lastPaymentPickerReturnAt >= 2_500) {
-            // Reopening the APK reads the newest server UI, without reinstalling.
+            // Supabase Edge Functions serve the document as text/plain.
+            // A direct location.replace() would bypass our trusted HTML loader and
+            // can show raw text or a blank screen. Reload through loadLiveApp().
             if (webView != null) webView.evaluateJavascript(
-                    "if(document.visibilityState==='visible' && !document.getElementById('paymentProof') && !document.getElementById('paymentDone')){" +
-                    "location.replace('" + BuildConfig.APP_URL + "?spg_reopen=' + Date.now())}", null);
+                    "(function(){return document.visibilityState==='visible' && " +
+                    "!document.getElementById('paymentProof') && " +
+                    "!document.getElementById('paymentDone') && " +
+                    "!window.spgProofCameraStream})()",
+                    canReload -> {
+                        if ("true".equals(canReload) && !destroyed) loadLiveApp();
+                    });
         }
         foregroundOnce = true;
     }
