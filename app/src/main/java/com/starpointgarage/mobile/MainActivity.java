@@ -18,6 +18,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.PermissionRequest;
+import android.webkit.RenderProcessGoneDetail;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -26,6 +27,7 @@ import android.webkit.WebViewClient;
 import android.webkit.ValueCallback;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
@@ -134,7 +136,7 @@ public class MainActivity extends Activity {
         settings.setBuiltInZoomControls(false);
         settings.setDisplayZoomControls(false);
         settings.setMediaPlaybackRequiresUserGesture(false);
-        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
         settings.setAllowFileAccess(false);
         settings.setAllowContentAccess(true); // Allow the URI selected explicitly by the user, not arbitrary file access.
         settings.setAllowFileAccessFromFileURLs(false);
@@ -148,7 +150,10 @@ public class MainActivity extends Activity {
             settings.setSafeBrowsingEnabled(true);
         }
         webView.setBackgroundColor(barColor);
-        webView.clearCache(true);
+        // Avoid aggressively clearing persisted WebView state on an Activity restart.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            webView.setRendererPriorityPolicy(WebView.RENDERER_PRIORITY_IMPORTANT, false);
+        }
 
         // Existing Member bridge names and methods remain available.
         webView.addJavascriptInterface(new NativeBridge(), "StarpointNative");
@@ -204,6 +209,27 @@ public class MainActivity extends Activity {
             }
 
             @Override
+            public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
+                // Android can reclaim a background WebView renderer under memory pressure.
+                // Handle the dead renderer instead of allowing an app crash; the next
+                // Activity reads the customer's saved page and booking draft.
+                if (webView == view) {
+                    ViewGroup parent = (ViewGroup) view.getParent();
+                    if (parent != null) parent.removeView(view);
+                    webView = null;
+                    view.destroy();
+                    uiHandler.post(() -> {
+                        if (destroyed) return;
+                        Intent restart = new Intent(MainActivity.this, MainActivity.class);
+                        restart.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(restart);
+                        finish();
+                    });
+                }
+                return true;
+            }
+
+            @Override
             public void onPageFinished(WebView view, String url) {
                 if (!destroyed && trusted(Uri.parse(url)) && !BuildConfig.APP_URL.contains("member-app")) {
                     view.evaluateJavascript(SCANNER_FALLBACK, null);
@@ -211,8 +237,10 @@ public class MainActivity extends Activity {
             }
         });
 
-        if (savedInstanceState == null) loadLiveApp();
-        else webView.restoreState(savedInstanceState);
+        // An Android process restart loses the old WebView's JavaScript heap even when
+        // restoreState succeeds. Load the trusted document and restore the user's page
+        // and unfinished booking from localStorage instead of restoring a blank history.
+        loadLiveApp();
     }
 
     private static boolean trusted(Uri uri) {
@@ -252,10 +280,29 @@ public class MainActivity extends Activity {
                     Toast.makeText(this, "Aplikasi gagal dimuat. Periksa koneksi lalu buka kembali.", Toast.LENGTH_LONG).show();
                     return;
                 }
-                webView.loadDataWithBaseURL(BuildConfig.APP_URL, document,
+                webView.loadDataWithBaseURL(BuildConfig.APP_URL, addMemberStateRecovery(document),
                         "text/html", "UTF-8", BuildConfig.APP_URL);
             });
         });
+    }
+
+    // The hosted Member application owns authentication and booking transactions.
+    // This wrapper injects only a local, non-sensitive UI draft recovery helper.
+    private String addMemberStateRecovery(String html) {
+        if (!BuildConfig.APP_URL.contains("member-app")) return html;
+        try (InputStream in = getAssets().open("member_state_recovery.js");
+             ByteArrayOutputStream bytes = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[4096];
+            int n;
+            while ((n = in.read(buffer)) != -1) bytes.write(buffer, 0, n);
+            String script = "<script id=\"spg-recovery-v109\">"
+                    + new String(bytes.toByteArray(), StandardCharsets.UTF_8) + "</script>";
+            int insertAt = html.lastIndexOf("</body>");
+            if (insertAt < 0) return html + script;
+            return html.substring(0, insertAt) + script + html.substring(insertAt);
+        } catch (Exception ignored) {
+            return html; // Never block app login because recovery injection failed.
+        }
     }
 
     private static String fetchAppHtml() {
@@ -465,8 +512,14 @@ public class MainActivity extends Activity {
         }
     }
 
-    // Never reload on Activity resume: preserve WebView DOM, navigation, auth and drafts.
-    // A fresh HTML version is fetched only on an actual new launch or explicit navigation.
+    // Never reload on Activity resume: keep the same DOM for ordinary app switching.
+    // Renderer/process death recovers the current page and booking fields from storage.
+
+    @Override protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        // Reopening from the launcher must re-use the existing task and WebView.
+    }
 
     @Override public void onConfigurationChanged(android.content.res.Configuration configuration) {
         super.onConfigurationChanged(configuration);
