@@ -1,10 +1,10 @@
-name: Build Starpoint Garage Member v106 (unsigned for secure local signing)
+name: Build Starpoint Garage Member v107 (installable preview + unsigned release)
 on:
   push:
     branches: [main]
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   build-member:
     runs-on: ubuntu-latest
@@ -48,3 +48,27 @@ jobs:
           name: Starpoint-Member-v106-ToSign
           path: build-for-local-signing/*
           if-no-files-found: error
+
+      - name: Build installable Member preview APK (debug-signing only)
+        run: gradle --no-daemon :app:assembleMemberDebug
+      - name: Prepare directly downloadable preview APK
+        shell: bash
+        run: |
+          mkdir -p preview-apk
+          APK_PATH=$(find app/build/outputs/apk/member/debug -maxdepth 1 -type f -name '*.apk' -print -quit)
+          test -n "$APK_PATH"
+          cp "$APK_PATH" preview-apk/Starpoint_Member_v107_Preview.apk
+          unzip -t preview-apk/Starpoint_Member_v107_Preview.apk >/dev/null
+          ls -lh preview-apk/Starpoint_Member_v107_Preview.apk
+      - name: Archive installable preview APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Starpoint-Member-v107-preview-APK
+          path: preview-apk/Starpoint_Member_v107_Preview.apk
+          if-no-files-found: error
+      - name: Publish direct APK download as prerelease
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create spg-member-v107-preview preview-apk/Starpoint_Member_v107_Preview.apk --target "$GITHUB_SHA" --title "Starpoint Garage Member v107 Preview APK" --notes "Preview APK untuk pengujian: tombol layanan Booking, Store dengan maps dan tombol rating Google. Menggunakan package terpisah dan debug signing, tidak dapat menggantikan APK produksi lama." --prerelease
