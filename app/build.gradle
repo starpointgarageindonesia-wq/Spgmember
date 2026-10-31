@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdk 24
         targetSdk 35
-        versionCode 111
-        versionName '1.11.0-background-crash-fix'
+        versionCode 112
+        versionName '1.12.0-fixed-header-nav'
     }
 
     buildFeatures { buildConfig true }
@@ -50,7 +50,7 @@ android {
     }
 
     buildTypes {
-        debug { applicationIdSuffix '.camera.preview111' }
+        debug { applicationIdSuffix '.camera.preview112' }
         release {
             applicationIdSuffix '.camera'
             minifyEnabled false
