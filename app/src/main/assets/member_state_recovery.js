@@ -1,174 +1,156 @@
-/* Starpoint Garage Member v110
- * Keep the open booking sheet and its form values when Android discards the WebView.
- * Never persist passwords, payment proof images or access/refresh tokens in this draft. */
+/* v110 - durable Member navigation/booking draft. Never stores passwords, tokens or photos. */
 (function () {
   'use strict';
-  if (window.__spgMemberUiRecovery110) return;
-  window.__spgMemberUiRecovery110 = true;
-  const KEY = 'spg_member_ui_draft_v110';
-  const PREVIOUS_KEY = 'spg_member_ui_draft_v109';
+  if (window.__spgMemberRecoveryV110) return;
+  window.__spgMemberRecoveryV110 = true;
+
+  const KEY = 'spg_member_resume_v110';
   const PAGES = ['home','reward','qr','services','store','booking','history','account'];
   const FIELDS = ['bkMotor','bkCatFallback','bkService','bkAddon','bkVoucher','bkPoints','bkDate','bkNotes'];
-  const MAX_AGE = 7 * 86400000;
-  let canPersist = false;
+  const MAX_AGE = 7 * 24 * 60 * 60 * 1000;
+  let sheetType = null;
   let restoring = false;
-  let finishedRestore = false;
-  let lastSnapshot = null;
-  let restoreTimer = 0;
+  let readyToSave = false;
+  let recoveryTimer = null;
 
   function currentUser() {
     try {
-      const token = state.session && state.session.access_token;
-      if (!token) return '';
-      const raw = token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
-      return String(JSON.parse(atob(raw)).sub || '');
-    } catch (_) { return ''; }
+      const jwt = state.session && state.session.access_token;
+      if (!jwt) return '';
+      const part = jwt.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      return JSON.parse(atob(part)).sub || '';
+    } catch (e) { return ''; }
   }
-
-  function persisted() {
+  function readSnapshot() {
     try {
-      const uid = currentUser();
-      if (!uid) return null;
-      const d = JSON.parse(localStorage.getItem(KEY) || localStorage.getItem(PREVIOUS_KEY) || 'null');
-      if (!d || d.userId !== uid || Date.now() - d.time > MAX_AGE) return null;
-      return d;
-    } catch (_) { return null; }
+      const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (!saved || !currentUser() || saved.user !== currentUser()) return null;
+      if (Date.now() - saved.at > MAX_AGE || saved.at > Date.now() + 60000) return null;
+      return saved;
+    } catch(e) { return null; }
   }
-
-  function getDraft() {
-    const first = document.getElementById('bkMotor');
-    if (!first) return null;
-    const draft = {};
+  function captureFields() {
+    const fields = {};
     FIELDS.forEach(id => {
       const el = document.getElementById(id);
-      if (el) draft[id] = String(el.value || '').slice(0, id === 'bkNotes' ? 1000 : 180);
+      if (el) fields[id] = String(el.value || '').slice(0, id === 'bkNotes' ? 1000 : 180);
     });
-    return draft;
+    return fields;
   }
-
-  function persistNow() {
-    if (!canPersist || restoring) return;
+  function persist() {
+    if (!readyToSave || restoring) return;
     try {
-      const uid = currentUser();
-      if (!uid) { localStorage.removeItem(KEY); localStorage.removeItem(PREVIOUS_KEY); return; }
-      const draft = getDraft();
-      const object = {
-        userId: uid, time: Date.now(),
-        page: PAGES.includes(state.page) ? state.page : 'home',
-        bookingCat: state.bookingCat,
-        rewardTab: state.rewardTab,
-        serviceGroup: state.serviceGroup,
-        serviceSearch: state.serviceSearch,
-        bookingOpen: !!draft,
-        draft: draft
-      };
-      // One atomic write. The browser never stores card data or uploaded images.
-      localStorage.setItem(KEY, JSON.stringify(object));
-      lastSnapshot = object;
-    } catch (_) {}
+      const user = currentUser();
+      if (!user) { localStorage.removeItem(KEY); return; }
+      localStorage.setItem(KEY, JSON.stringify({
+        user:user,at:Date.now(),page:PAGES.includes(state.page) ? state.page : 'home',
+        bookingCat:state.bookingCat,rewardTab:state.rewardTab,
+        serviceGroup:state.serviceGroup,serviceSearch:state.serviceSearch,
+        sheet:sheetType,form:sheetType === 'booking' ? captureFields() : null
+      }));
+    } catch (e) {}
   }
-
-  // The prior version only saved on form input and page renders. Opening a sheet
-  // does neither, so returning from Home lost the entire untouched booking form.
+  window.__spgMemberSaveDraft = persist;
+  const originalRender = render;
+  render = function() {
+    const value = originalRender.apply(this, arguments);
+    persist();
+    return value;
+  };
+  const originalOpenSheet = openSheet;
+  openSheet = function() {
+    sheetType = 'other';
+    const value = originalOpenSheet.apply(this, arguments);
+    persist();
+    return value;
+  };
   const originalOpenBooking = openBooking;
-  openBooking = function () {
-    const ret = originalOpenBooking.apply(this, arguments);
-    if (!restoring) persistNow();
-    return ret;
+  openBooking = function() {
+    sheetType = 'booking';
+    const value = originalOpenBooking.apply(this, arguments);
+    sheetType = 'booking';
+    persist(); // Save the sheet even if no field has been edited yet.
+    return value;
   };
   const originalCloseSheet = closeSheet;
-  closeSheet = function () {
-    const ret = originalCloseSheet.apply(this, arguments);
-    if (!restoring) persistNow();
-    return ret;
+  closeSheet = function() {
+    const value = originalCloseSheet.apply(this, arguments);
+    sheetType = null;
+    persist(); // Closing/cancelling/finishing clears the draft.
+    return value;
   };
-  const originalRender = render;
-  render = function () {
-    const ret = originalRender.apply(this, arguments);
-    if (!restoring) persistNow();
-    return ret;
-  };
-
-  document.addEventListener('input', e => {
-    if (e.target && e.target.closest && e.target.closest('#sheetRoot')) persistNow();
+  ['input','change'].forEach(type =>
+    document.addEventListener(type, event => {
+      if (sheetType === 'booking' && event.target &&
+          event.target.closest && event.target.closest('#sheetRoot')) persist();
+    }, true)
+  );
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) persist();
   }, true);
-  document.addEventListener('change', e => {
-    if (e.target && e.target.closest && e.target.closest('#sheetRoot')) persistNow();
-  }, true);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) persistNow(); }, true);
-  window.addEventListener('pagehide', persistNow, true);
-  window.addEventListener('beforeunload', persistNow, true);
-  window.__spgCaptureState = persistNow;
+  window.addEventListener('pagehide',persist,true);
+  window.addEventListener('beforeunload',persist,true);
 
-  const original = persisted();
-  if (!original) {
-    canPersist = true;
+  const saved = readSnapshot();
+  if (!saved) {
+    readyToSave = true;
+    persist();
     return;
   }
-  restoring = true;
-  lastSnapshot = original;
-  if (PAGES.includes(original.page)) state.page = original.page;
-  if (['small','medium','large','big_bike','luxury'].includes(original.bookingCat)) state.bookingCat = original.bookingCat;
-  if (['voucher','redeem','history'].includes(original.rewardTab)) state.rewardTab = original.rewardTab;
-  if (typeof original.serviceGroup === 'string') state.serviceGroup = original.serviceGroup;
-  if (typeof original.serviceSearch === 'string') state.serviceSearch = original.serviceSearch.slice(0,120);
-  document.querySelectorAll('.nav button').forEach(b =>
-    b.classList.toggle('active', b.dataset.page === state.page));
-  if (state.session && state.session.access_token) render();
-  restoring = false;
 
-  function finalize() {
-    if (finishedRestore) return;
-    finishedRestore = true;
-    clearTimeout(restoreTimer);
+  restoring = true; // Do not overwrite stored draft before asynchronous data finishes loading.
+  if (PAGES.includes(saved.page)) state.page = saved.page;
+  if (typeof saved.bookingCat === 'string') state.bookingCat = saved.bookingCat;
+  if (typeof saved.rewardTab === 'string') state.rewardTab = saved.rewardTab;
+  if (typeof saved.serviceGroup === 'string') state.serviceGroup = saved.serviceGroup;
+  if (typeof saved.serviceSearch === 'string') state.serviceSearch = saved.serviceSearch.slice(0,120);
+  document.querySelectorAll('.nav button').forEach(button => {
+    button.classList.toggle('active',button.dataset.page === state.page);
+  });
+  try { originalRender(); } catch(e) {}
+
+  function finishRestore() {
+    if (recoveryTimer !== null) clearTimeout(recoveryTimer);
+    recoveryTimer = null;
     restoring = false;
-    canPersist = true;
-    // Once the booking is visible, persist refreshed state. An old draft is
-    // never cleared simply because the dashboard needs another network request.
-    persistNow();
+    readyToSave = true;
+    persist();
   }
-  if (!original.bookingOpen && !original.draft) { finalize(); return; }
+  if (saved.sheet !== 'booking') { finishRestore(); return; }
 
-  function restoreField(id, value, eventType) {
-    const el = document.getElementById(id);
-    if (!el || value === undefined || value === null) return;
-    const text = String(value);
-    if (el.tagName === 'SELECT' &&
-        !Array.from(el.options).some(opt => opt.value === text)) return;
-    el.value = text;
-    if (eventType) el.dispatchEvent(new Event(eventType, {bubbles:true}));
-  }
-
-  let retries = 0;
+  let attempts = 0;
   function restoreBooking() {
-    if (finishedRestore) return;
-    if (!state.session || !state.session.access_token) { finalize(); return; }
-    // Catalog is cached before this script executes, so the form often appears
-    // immediately rather than waiting for a slow dashboard network call.
-    if (!Array.isArray(state.catalog) || state.catalog.length === 0) {
-      if (++retries <= 90) restoreTimer = setTimeout(restoreBooking,200);
-      else { canPersist = true; }
+    if (!currentUser()) { finishRestore(); return; }
+    // Cached service catalog normally loads instantly. Wait for live data when empty.
+    if ((!state.catalog || !state.catalog.length) && attempts++ < 40) {
+      recoveryTimer = setTimeout(restoreBooking,250);
       return;
     }
     try {
-      restoring = true;
-      if (!document.getElementById('bkMotor')) originalOpenBooking(original.draft?.bkService || '');
-      const d = original.draft || {};
-      restoreField('bkMotor',d.bkMotor,'input');
-      restoreField('bkCatFallback',d.bkCatFallback,'change');
-      restoreField('bkService',d.bkService,'change');
-      restoreField('bkAddon',d.bkAddon,'change');
-      restoreField('bkVoucher',d.bkVoucher,'change');
-      restoreField('bkPoints',d.bkPoints,'input');
-      restoreField('bkDate',d.bkDate,'change');
-      restoreField('bkNotes',d.bkNotes,'input');
-    } catch (_) {
-      // Keep page loaded even if a newer catalog no longer has an old service.
+      if (!document.getElementById('bkMotor')) {
+        originalOpenBooking.call(window,saved.form && saved.form.bkService || '');
+      }
+      sheetType = 'booking';
+      const form = saved.form || {};
+      function put(id,value,eventType) {
+        if (value === undefined || value === null) return;
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.value = String(value);
+        if (eventType) el.dispatchEvent(new Event(eventType,{bubbles:true}));
+      }
+      put('bkMotor',form.bkMotor,'input');
+      put('bkCatFallback',form.bkCatFallback,'change');
+      put('bkService',form.bkService,'change');
+      put('bkAddon',form.bkAddon,'change');
+      put('bkVoucher',form.bkVoucher,'change');
+      put('bkPoints',form.bkPoints,'input');
+      put('bkDate',form.bkDate,'change');
+      put('bkNotes',form.bkNotes,'input');
+    } catch (e) {
+      // Restore page even if the server changed its catalog. Never submit a booking.
     }
-    restoring = false;
-    finalize();
+    finishRestore();
   }
-  // Load the modal before the user's next interaction; startup will also fetch
-  // the latest prices asynchronously after the form has appeared.
   restoreBooking();
 })();
