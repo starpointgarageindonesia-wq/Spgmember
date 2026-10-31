@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdk 24
         targetSdk 35
-        versionCode 108
-        versionName '1.8.0-background-resume'
+        versionCode 109
+        versionName '1.9.0-state-recovery'
     }
 
     buildFeatures { buildConfig true }
@@ -50,7 +50,7 @@ android {
     }
 
     buildTypes {
-        debug { applicationIdSuffix '.camera.preview108' }
+        debug { applicationIdSuffix '.camera.preview109' }
         release {
             applicationIdSuffix '.camera'
             minifyEnabled false
