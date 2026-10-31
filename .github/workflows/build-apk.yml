@@ -47,7 +47,8 @@ jobs:
           grep -q 'onPause()' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
           grep -q 'readCachedTrustedHtml' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
           grep -q 'openBooking = function' app/src/main/assets/member_state_recovery.js
-          grep -q 'bookingOpen: !!draft' app/src/main/assets/member_state_recovery.js
+          grep -q "sheetType = 'booking'" app/src/main/assets/member_state_recovery.js
+          grep -q 'Save the sheet even if no field has been edited' app/src/main/assets/member_state_recovery.js
           grep -q '__spgMemberSaveDraft' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
           ! grep -q 'FLAG_ACTIVITY_CLEAR_TASK' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
       - name: Build Member release unsigned
