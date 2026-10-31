@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdk 24
         targetSdk 35
-        versionCode 109
-        versionName '1.9.0-state-recovery'
+        versionCode 110
+        versionName '1.10.0-background-booking-recovery'
     }
 
     buildFeatures { buildConfig true }
@@ -50,7 +50,7 @@ android {
     }
 
     buildTypes {
-        debug { applicationIdSuffix '.camera.preview109' }
+        debug { applicationIdSuffix '.camera.preview110' }
         release {
             applicationIdSuffix '.camera'
             minifyEnabled false
