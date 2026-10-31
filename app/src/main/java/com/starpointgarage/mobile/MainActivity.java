@@ -301,6 +301,7 @@ public class MainActivity extends Activity {
                 }
             }
             final String document = html;
+            if (document != null) writeCachedTrustedHtml(document);
             runOnUiThread(() -> {
                 loadingDocument = false;
                 if (destroyed || webView == null) return;
@@ -308,7 +309,6 @@ public class MainActivity extends Activity {
                     Toast.makeText(this, "Aplikasi gagal dimuat. Periksa koneksi lalu buka kembali.", Toast.LENGTH_LONG).show();
                     return;
                 }
-                writeCachedTrustedHtmlAsync(document);
                 webView.loadDataWithBaseURL(BuildConfig.APP_URL, addMemberStateRecovery(document),
                         "text/html", "UTF-8", BuildConfig.APP_URL);
             });
@@ -338,10 +338,6 @@ public class MainActivity extends Activity {
         } catch (Exception ignored) {
             return null;
         }
-    }
-
-    private void writeCachedTrustedHtmlAsync(String document) {
-        networkExecutor.execute(() -> writeCachedTrustedHtml(document));
     }
 
     private void writeCachedTrustedHtml(String html) {
