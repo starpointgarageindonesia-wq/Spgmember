@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdk 24
         targetSdk 35
-        versionCode 106
-        versionName '1.6.0-qris-upload'
+        versionCode 107
+        versionName '1.7.0-booking-store-preview'
     }
 
     buildFeatures { buildConfig true }
@@ -50,7 +50,7 @@ android {
     }
 
     buildTypes {
-        debug { applicationIdSuffix '.camera' }
+        debug { applicationIdSuffix '.camera.preview107' }
         release {
             applicationIdSuffix '.camera'
             minifyEnabled false
