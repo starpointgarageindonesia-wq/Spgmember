@@ -43,6 +43,11 @@ jobs:
           grep -q 'onRenderProcessGone' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
           grep -q 'addMemberStateRecovery' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
           test -s app/src/main/assets/member_state_recovery.js
+          node --check app/src/main/assets/member_state_recovery.js
+          grep -q 'onPause()' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
+          grep -q 'readCachedTrustedHtml' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
+          grep -q 'openBooking = function' app/src/main/assets/member_state_recovery.js
+          grep -q 'bookingOpen: !!draft' app/src/main/assets/member_state_recovery.js
           grep -q '__spgMemberSaveDraft' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
           ! grep -q 'FLAG_ACTIVITY_CLEAR_TASK' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
       - name: Build Member release unsigned
