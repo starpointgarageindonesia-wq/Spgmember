@@ -1,0 +1,42 @@
+name: Build Starpoint Garage Member v106 (unsigned for secure local signing)
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build-member:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Gradle 8.9
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Install Android 35
+        run: sdkmanager --install 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Build Member release unsigned
+        run: gradle --no-daemon :app:assembleMemberRelease
+      - name: Collect APK and signing utility (NO PRIVATE KEYS)
+        shell: bash
+        run: |
+          mkdir -p build-for-local-signing
+          find app/build/outputs/apk/member/release -maxdepth 1 -type f -print
+          cp app/build/outputs/apk/member/release/*unsigned.apk build-for-local-signing/Starpoint_Member_v106_unsigned.apk
+          cp "$ANDROID_HOME/build-tools/35.0.0/lib/apksigner.jar" build-for-local-signing/apksigner.jar
+      - name: Upload unsigned APK and official apksigner
+        uses: actions/upload-artifact@v4
+        with:
+          name: Starpoint-Member-v106-ToSign
+          path: build-for-local-signing/*
+          if-no-files-found: error

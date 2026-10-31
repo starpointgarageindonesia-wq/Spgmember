@@ -1,0 +1,9 @@
+<resources>
+    <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">#050505</item>
+        <item name="android:navigationBarColor">#050505</item>
+        <item name="android:windowBackground">@drawable/start_screen</item>
+        <item name="android:windowActionModeOverlay">true</item>
+    </style>
+</resources>

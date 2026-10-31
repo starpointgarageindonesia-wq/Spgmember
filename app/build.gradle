@@ -1,0 +1,68 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.starpointgarage.mobile'
+    compileSdk 35
+
+    defaultConfig {
+        minSdk 24
+        targetSdk 35
+        versionCode 106
+        versionName '1.6.0-qris-upload'
+    }
+
+    buildFeatures { buildConfig true }
+    lint { checkReleaseBuilds false }
+
+    flavorDimensions 'role'
+    productFlavors {
+        member {
+            dimension 'role'
+            applicationId 'com.starpointgarage.member'
+            resValue 'string', 'app_name', 'Starpoint Garage'
+            buildConfigField 'String', 'APP_URL', '"https://msvdxyicostwztisvbvl.supabase.co/functions/v1/member-app/"'
+        }
+        owner {
+            dimension 'role'
+            applicationId 'com.starpointgarage.owner'
+            resValue 'string', 'app_name', 'Owner SPG'
+            buildConfigField 'String', 'APP_URL', '"https://msvdxyicostwztisvbvl.supabase.co/functions/v1/owner-app/"'
+        }
+        technician {
+            dimension 'role'
+            applicationId 'com.starpointgarage.technician'
+            resValue 'string', 'app_name', 'Teknisi SPG'
+            buildConfigField 'String', 'APP_URL', '"https://msvdxyicostwztisvbvl.supabase.co/functions/v1/technician-app/"'
+        }
+    }
+
+    signingConfigs {
+        cameraRelease {
+            def signingStore = System.getenv('STARPOINT_SIGNING_STORE')
+            def signingPassword = System.getenv('STARPOINT_SIGNING_PASSWORD')
+            if (signingStore && signingPassword) {
+                storeFile file(signingStore)
+                storePassword signingPassword
+                keyAlias 'starpoint-camera'
+                keyPassword signingPassword
+            }
+        }
+    }
+
+    buildTypes {
+        debug { applicationIdSuffix '.camera' }
+        release {
+            applicationIdSuffix '.camera'
+            minifyEnabled false
+            // An externally-managed signing key is needed for a compatible APK update.
+            signingConfig signingConfigs.cameraRelease
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies { implementation 'com.google.zxing:core:3.5.4' }
