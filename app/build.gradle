@@ -55,7 +55,7 @@ android {
             applicationIdSuffix '.camera'
             minifyEnabled false
             // An externally-managed signing key is needed for a compatible APK update.
-            signingConfig signingConfigs.cameraRelease
+            // Sign separately with the original private key. CI builds an unsigned APK.
         }
     }
 
