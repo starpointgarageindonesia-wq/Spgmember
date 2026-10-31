@@ -66,6 +66,8 @@ public class MainActivity extends Activity {
     private final ExecutorService networkExecutor = Executors.newSingleThreadExecutor();
     private volatile boolean destroyed;
     private volatile boolean loadingDocument;
+    private static final String FOREGROUND_STATE_PREFS = "spg_member_activity_state";
+    private static final long SHORT_RETURN_WINDOW_MS = 20 * 60_000L;
 
     // Owner/Technician already call BarcodeDetector.detect(canvas) in their live pages.
     // Android WebView may omit that web API; the fallback only supplies a decoder.
@@ -117,7 +119,11 @@ public class MainActivity extends Activity {
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT));
         setContentView(root);
-        if (savedInstanceState == null) {
+        long lastBackground = getSharedPreferences(FOREGROUND_STATE_PREFS, MODE_PRIVATE)
+                .getLong("background_time", 0L);
+        boolean resumingRecentTask = lastBackground > 0
+                && System.currentTimeMillis() - lastBackground < SHORT_RETURN_WINDOW_MS;
+        if (savedInstanceState == null && !resumingRecentTask) {
             uiHandler.postDelayed(() -> {
                 if (!destroyed && startScreen != null) startScreen.setVisibility(View.GONE);
             }, START_SCREEN_DURATION_MS);
@@ -295,7 +301,7 @@ public class MainActivity extends Activity {
             byte[] buffer = new byte[4096];
             int n;
             while ((n = in.read(buffer)) != -1) bytes.write(buffer, 0, n);
-            String script = "<script id=\"spg-recovery-v109\">"
+            String script = "<script id=\"spg-recovery-v110\">"
                     + new String(bytes.toByteArray(), StandardCharsets.UTF_8) + "</script>";
             int insertAt = html.lastIndexOf("</body>");
             if (insertAt < 0) return html + script;
@@ -514,6 +520,17 @@ public class MainActivity extends Activity {
 
     // Never reload on Activity resume: keep the same DOM for ordinary app switching.
     // Renderer/process death recovers the current page and booking fields from storage.
+
+    @Override protected void onPause() {
+        // Save the live booking sheet BEFORE Android freezes/kills the WebView.
+        // The page's visibilitychange handler is a second independent fallback.
+        if (webView != null) {
+            webView.evaluateJavascript("window.__spgCaptureState&&window.__spgCaptureState()", null);
+        }
+        getSharedPreferences(FOREGROUND_STATE_PREFS, MODE_PRIVATE)
+                .edit().putLong("background_time", System.currentTimeMillis()).commit();
+        super.onPause();
+    }
 
     @Override protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
