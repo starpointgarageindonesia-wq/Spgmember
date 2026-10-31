@@ -376,6 +376,26 @@ public class MainActivity extends Activity {
     // This wrapper injects only a local, non-sensitive UI draft recovery helper.
     private String addMemberStateRecovery(String html) {
         if (!BuildConfig.APP_URL.contains("member-app")) return html;
+        // Member v112: only layout adjustments requested by owner.
+        // Fixed header and raised bottom tabs remain correct even if a warm
+        // launch uses cached trusted HTML from an older Edge Function.
+        String fixedCss = "<style id=\"spg-fixed-member-chrome-v112\">"
+                + "#mainScreen .topbar{position:fixed!important;top:env(safe-area-inset-top,0px)!important;"
+                + "left:50%;transform:translateX(-50%)!important;width:min(760px,100%);"
+                + "z-index:45!important;animation:none!important;transition:none!important;}"
+                + "#mainScreen{padding-top:94px!important;"
+                + "padding-bottom:calc(142px + env(safe-area-inset-bottom,0px))!important;}"
+                + "#mainScreen .nav{position:fixed!important;left:50%;"
+                + "bottom:calc(18px + env(safe-area-inset-bottom,0px))!important;"
+                + "transform:translateX(-50%)!important;width:min(760px,100%);"
+                + "height:96px;box-sizing:border-box;padding:12px 7px 10px!important;"
+                + "border-radius:24px!important;z-index:46!important;"
+                + "animation:none!important;transition:none!important;}"
+                + "</style>";
+        int headEnd = html.lastIndexOf("</head>");
+        if (headEnd >= 0 && !html.contains("spg-fixed-member-chrome-v112")) {
+            html = html.substring(0, headEnd) + fixedCss + html.substring(headEnd);
+        }
         try (InputStream in = getAssets().open("member_state_recovery.js");
              ByteArrayOutputStream bytes = new ByteArrayOutputStream()) {
             byte[] buffer = new byte[4096];
