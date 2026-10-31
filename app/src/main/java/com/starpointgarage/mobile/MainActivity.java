@@ -41,6 +41,9 @@ import com.google.zxing.common.HybridBinarizer;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -267,6 +270,26 @@ public class MainActivity extends Activity {
     // document as text first, then load those exact bytes into WebView as HTML.
     private void loadLiveApp() {
         if (destroyed || loadingDocument) return;
+        // If the operating system has reclaimed the app moments after Home,
+        // reconstruct the last trusted HTML instantly without a network roundtrip.
+        long pauseAt = getSharedPreferences(FOREGROUND_STATE_PREFS, MODE_PRIVATE)
+                .getLong("background_time", 0L);
+        boolean warmRestart = pauseAt > 0
+                && System.currentTimeMillis() - pauseAt < SHORT_RETURN_WINDOW_MS;
+        if (warmRestart) {
+            String cached = readCachedTrustedHtml();
+            if (cached != null) {
+                webView.loadDataWithBaseURL(BuildConfig.APP_URL, addMemberStateRecovery(cached),
+                        "text/html", "UTF-8", BuildConfig.APP_URL);
+                // Download updates for the next true app launch, never reload this
+                // customer's active booking while they are switching apps.
+                networkExecutor.execute(() -> {
+                    String latest = fetchAppHtml();
+                    if (latest != null) writeCachedTrustedHtml(latest);
+                });
+                return;
+            }
+        }
         loadingDocument = true;
         networkExecutor.execute(() -> {
             String html = null;
@@ -285,10 +308,58 @@ public class MainActivity extends Activity {
                     Toast.makeText(this, "Aplikasi gagal dimuat. Periksa koneksi lalu buka kembali.", Toast.LENGTH_LONG).show();
                     return;
                 }
+                writeCachedTrustedHtmlAsync(document);
                 webView.loadDataWithBaseURL(BuildConfig.APP_URL, addMemberStateRecovery(document),
                         "text/html", "UTF-8", BuildConfig.APP_URL);
             });
         });
+    }
+
+    private File cachedHtmlFile() {
+        return new File(getCacheDir(), "spg_member_trusted_html_v110.html");
+    }
+
+    private String readCachedTrustedHtml() {
+        if (!BuildConfig.APP_URL.contains("member-app")) return null;
+        File file = cachedHtmlFile();
+        if (!file.isFile() || file.length() < 100 || file.length() > 8_000_000L) return null;
+        try (FileInputStream input = new FileInputStream(file);
+             ByteArrayOutputStream output = new ByteArrayOutputStream((int) file.length())) {
+            byte[] buffer = new byte[16_384];
+            int bytes, total = 0;
+            while ((bytes = input.read(buffer)) != -1) {
+                total += bytes;
+                if (total > 8_000_000) return null;
+                output.write(buffer, 0, bytes);
+            }
+            String html = new String(output.toByteArray(), StandardCharsets.UTF_8);
+            String prefix = html.trim().toLowerCase(Locale.ROOT);
+            return prefix.startsWith("<!doctype html") || prefix.startsWith("<html") ? html : null;
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    private void writeCachedTrustedHtmlAsync(String document) {
+        networkExecutor.execute(() -> writeCachedTrustedHtml(document));
+    }
+
+    private void writeCachedTrustedHtml(String html) {
+        if (html == null || !BuildConfig.APP_URL.contains("member-app")) return;
+        try {
+            File dest = cachedHtmlFile();
+            File tmp = new File(dest.getParentFile(), dest.getName() + ".tmp");
+            try (FileOutputStream output = new FileOutputStream(tmp)) {
+                byte[] data = html.getBytes(StandardCharsets.UTF_8);
+                if (data.length > 8_000_000) return;
+                output.write(data);
+                output.getFD().sync();
+            }
+            if (!tmp.renameTo(dest)) {
+                // Cache is only an optimization, so never break app startup.
+                tmp.delete();
+            }
+        } catch (Exception ignored) { /* Ordinary network boot is the fallback. */ }
     }
 
     // The hosted Member application owns authentication and booking transactions.
