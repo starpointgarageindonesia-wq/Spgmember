@@ -68,17 +68,17 @@ jobs:
           APK_PATH=$(find app/build/outputs/apk/member/debug -maxdepth 1 -type f -name '*.apk' -print -quit)
           test -n "$APK_PATH"
           cp "$APK_PATH" preview-apk/Starpoint_Member_v109_KeepState.apk
-          unzip -t preview-apk/Starpoint_Member_v109_Background.apk >/dev/null
-          ls -lh preview-apk/Starpoint_Member_v109_Background.apk
+          unzip -t preview-apk/Starpoint_Member_v109_KeepState.apk >/dev/null
+          ls -lh preview-apk/Starpoint_Member_v109_KeepState.apk
       - name: Archive installable preview APK
         uses: actions/upload-artifact@v4
         with:
           name: Starpoint-Member-v109-keepstate-APK
-          path: preview-apk/Starpoint_Member_v109_Background.apk
+          path: preview-apk/Starpoint_Member_v109_KeepState.apk
           if-no-files-found: error
       - name: Publish direct APK download as prerelease
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create spg-member-v109-preview preview-apk/Starpoint_Member_v109_Background.apk --target "$GITHUB_SHA" --title "Starpoint Garage Member v109 Preview APK" --notes "Preview APK: reuses the existing task, preserves active WebView, stores active page and unfinished booking fields safely, and restores them if Android kills the background renderer. Does not contain an original production signing key." --prerelease
+          gh release create spg-member-v109-preview preview-apk/Starpoint_Member_v109_KeepState.apk --target "$GITHUB_SHA" --title "Starpoint Garage Member v109 Preview APK" --notes "Preview APK: reuses the existing task, preserves active WebView, stores active page and unfinished booking fields safely, and restores them if Android kills the background renderer. Does not contain an original production signing key." --prerelease
