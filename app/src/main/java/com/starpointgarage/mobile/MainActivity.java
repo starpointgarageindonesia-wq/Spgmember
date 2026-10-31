@@ -225,11 +225,10 @@ public class MainActivity extends Activity {
                     webView = null;
                     view.destroy();
                     uiHandler.post(() -> {
-                        if (destroyed) return;
-                        Intent restart = new Intent(MainActivity.this, MainActivity.class);
-                        restart.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(restart);
-                        finish();
+                        if (destroyed || isFinishing()) return;
+                        // Do not clear the task; Android may kill a background
+                        // WebView renderer, not the customer's booking workflow.
+                        recreate();
                     });
                 }
                 return true;
@@ -525,7 +524,7 @@ public class MainActivity extends Activity {
         // Save the live booking sheet BEFORE Android freezes/kills the WebView.
         // The page's visibilitychange handler is a second independent fallback.
         if (webView != null) {
-            webView.evaluateJavascript("window.__spgCaptureState&&window.__spgCaptureState()", null);
+            webView.evaluateJavascript("window.__spgMemberSaveDraft&&window.__spgMemberSaveDraft()", null);
         }
         getSharedPreferences(FOREGROUND_STATE_PREFS, MODE_PRIVATE)
                 .edit().putLong("background_time", System.currentTimeMillis()).commit();
