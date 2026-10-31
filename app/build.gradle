@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdk 24
         targetSdk 35
-        versionCode 107
-        versionName '1.7.0-booking-store-preview'
+        versionCode 108
+        versionName '1.8.0-background-resume'
     }
 
     buildFeatures { buildConfig true }
@@ -50,7 +50,7 @@ android {
     }
 
     buildTypes {
-        debug { applicationIdSuffix '.camera.preview107' }
+        debug { applicationIdSuffix '.camera.preview108' }
         release {
             applicationIdSuffix '.camera'
             minifyEnabled false

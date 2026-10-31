@@ -64,9 +64,6 @@ public class MainActivity extends Activity {
     private final ExecutorService networkExecutor = Executors.newSingleThreadExecutor();
     private volatile boolean destroyed;
     private volatile boolean loadingDocument;
-    private long lastBackgroundAt;
-    private boolean foregroundOnce;
-    private long lastPaymentPickerReturnAt;
 
     // Owner/Technician already call BarcodeDetector.detect(canvas) in their live pages.
     // Android WebView may omit that web API; the fallback only supplies a decoder.
@@ -118,9 +115,14 @@ public class MainActivity extends Activity {
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT));
         setContentView(root);
-        uiHandler.postDelayed(() -> {
-            if (!destroyed && startScreen != null) startScreen.setVisibility(View.GONE);
-        }, START_SCREEN_DURATION_MS);
+        if (savedInstanceState == null) {
+            uiHandler.postDelayed(() -> {
+                if (!destroyed && startScreen != null) startScreen.setVisibility(View.GONE);
+            }, START_SCREEN_DURATION_MS);
+        } else {
+            // Rotation/process restoration must not repeat the 1.5s splash.
+            startScreen.setVisibility(View.GONE);
+        }
 
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -326,7 +328,6 @@ public class MainActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode != PAYMENT_IMAGE_REQUEST) return;
-        lastPaymentPickerReturnAt = android.os.SystemClock.elapsedRealtime();
         ValueCallback<Uri[]> callback = pendingPaymentFileChooser;
         pendingPaymentFileChooser = null;
         if (callback == null) return;
@@ -464,30 +465,13 @@ public class MainActivity extends Activity {
         }
     }
 
-    @Override protected void onPause() {
-        lastBackgroundAt = android.os.SystemClock.elapsedRealtime();
-        super.onPause();
-    }
+    // Never reload on Activity resume: preserve WebView DOM, navigation, auth and drafts.
+    // A fresh HTML version is fetched only on an actual new launch or explicit navigation.
 
-    @Override protected void onResume() {
-        super.onResume();
-        if (foregroundOnce && lastBackgroundAt > 0
-                && android.os.SystemClock.elapsedRealtime() - lastBackgroundAt >= 800
-                && pendingPaymentFileChooser == null && pendingCameraRequest == null
-                && android.os.SystemClock.elapsedRealtime() - lastPaymentPickerReturnAt >= 2_500) {
-            // Supabase Edge Functions serve the document as text/plain.
-            // A direct location.replace() would bypass our trusted HTML loader and
-            // can show raw text or a blank screen. Reload through loadLiveApp().
-            if (webView != null) webView.evaluateJavascript(
-                    "(function(){return document.visibilityState==='visible' && " +
-                    "!document.getElementById('paymentProof') && " +
-                    "!document.getElementById('paymentDone') && " +
-                    "!window.spgProofCameraStream})()",
-                    canReload -> {
-                        if ("true".equals(canReload) && !destroyed) loadLiveApp();
-                    });
-        }
-        foregroundOnce = true;
+    @Override public void onConfigurationChanged(android.content.res.Configuration configuration) {
+        super.onConfigurationChanged(configuration);
+        // Resize the existing WebView instead of destroying and rebuilding it.
+        if (webView != null) webView.invalidate();
     }
 
     @Override public void onBackPressed() {

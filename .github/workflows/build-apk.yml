@@ -1,4 +1,4 @@
-name: Build Starpoint Garage Member v107 (installable preview + unsigned release)
+name: Build Starpoint Garage Member v108 (installable preview + unsigned release)
 on:
   push:
     branches: [main]
@@ -33,6 +33,12 @@ jobs:
           mv "$ANDROID_HOME/cmdline-tools/cmdline-tools" "$ANDROID_HOME/cmdline-tools/latest"
           (yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_HOME" --licenses) || true
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_HOME" 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Verify resume does not force a page reload
+        shell: bash
+        run: |
+          ! grep -q 'lastBackgroundAt' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
+          ! grep -q 'protected void onResume()' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
+          grep -q 'alwaysRetainTaskState' app/src/main/AndroidManifest.xml
       - name: Build Member release unsigned
         run: gradle --no-daemon :app:assembleMemberRelease
       - name: Collect APK and signing utility (NO PRIVATE KEYS)
@@ -40,12 +46,12 @@ jobs:
         run: |
           mkdir -p build-for-local-signing
           find app/build/outputs/apk/member/release -maxdepth 1 -type f -print
-          cp app/build/outputs/apk/member/release/*unsigned.apk build-for-local-signing/Starpoint_Member_v106_unsigned.apk
+          cp app/build/outputs/apk/member/release/*unsigned.apk build-for-local-signing/Starpoint_Member_v108_unsigned.apk
           cp "$ANDROID_HOME/build-tools/35.0.0/lib/apksigner.jar" build-for-local-signing/apksigner.jar
       - name: Upload unsigned APK and official apksigner
         uses: actions/upload-artifact@v4
         with:
-          name: Starpoint-Member-v106-ToSign
+          name: Starpoint-Member-v108-ToSign
           path: build-for-local-signing/*
           if-no-files-found: error
 
@@ -57,18 +63,18 @@ jobs:
           mkdir -p preview-apk
           APK_PATH=$(find app/build/outputs/apk/member/debug -maxdepth 1 -type f -name '*.apk' -print -quit)
           test -n "$APK_PATH"
-          cp "$APK_PATH" preview-apk/Starpoint_Member_v107_Preview.apk
-          unzip -t preview-apk/Starpoint_Member_v107_Preview.apk >/dev/null
-          ls -lh preview-apk/Starpoint_Member_v107_Preview.apk
+          cp "$APK_PATH" preview-apk/Starpoint_Member_v108_Background.apk
+          unzip -t preview-apk/Starpoint_Member_v108_Background.apk >/dev/null
+          ls -lh preview-apk/Starpoint_Member_v108_Background.apk
       - name: Archive installable preview APK
         uses: actions/upload-artifact@v4
         with:
-          name: Starpoint-Member-v107-preview-APK
-          path: preview-apk/Starpoint_Member_v107_Preview.apk
+          name: Starpoint-Member-v108-background-APK
+          path: preview-apk/Starpoint_Member_v108_Background.apk
           if-no-files-found: error
       - name: Publish direct APK download as prerelease
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create spg-member-v107-preview preview-apk/Starpoint_Member_v107_Preview.apk --target "$GITHUB_SHA" --title "Starpoint Garage Member v107 Preview APK" --notes "Preview APK untuk pengujian: tombol layanan Booking, Store dengan maps dan tombol rating Google. Menggunakan package terpisah dan debug signing, tidak dapat menggantikan APK produksi lama." --prerelease
+          gh release create spg-member-v108-preview preview-apk/Starpoint_Member_v108_Background.apk --target "$GITHUB_SHA" --title "Starpoint Garage Member v108 Preview APK" --notes "Preview APK: WebView tetap di halaman yang sama ketika pindah aplikasi dan kembali; tidak reload pada onResume. Tombol Booking, Store Maps dan rating Google tetap tersedia. Menggunakan package terpisah dan debug signing, tidak dapat menggantikan APK produksi lama." --prerelease
