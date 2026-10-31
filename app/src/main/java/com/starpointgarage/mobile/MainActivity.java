@@ -69,6 +69,8 @@ public class MainActivity extends Activity {
     private final ExecutorService networkExecutor = Executors.newSingleThreadExecutor();
     private volatile boolean destroyed;
     private volatile boolean loadingDocument;
+    private volatile boolean rendererGone;
+    private boolean rendererRestartScheduled;
     private static final String FOREGROUND_STATE_PREFS = "spg_member_activity_state";
     private static final long SHORT_RETURN_WINDOW_MS = 20 * 60_000L;
 
@@ -219,19 +221,31 @@ public class MainActivity extends Activity {
 
             @Override
             public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
-                // Android can reclaim a background WebView renderer under memory pressure.
-                // Handle the dead renderer instead of allowing an app crash; the next
-                // Activity reads the customer's saved page and booking draft.
-                if (webView == view) {
-                    ViewGroup parent = (ViewGroup) view.getParent();
-                    if (parent != null) parent.removeView(view);
-                    webView = null;
+                // Android may terminate a WebView renderer while the customer is in
+                // another application. Avoid any interaction with the dead renderer.
+                if (webView != view) return true;
+                rendererGone = true;
+                try {
+                    if (view.getParent() instanceof ViewGroup) {
+                        ((ViewGroup) view.getParent()).removeView(view);
+                    }
                     view.destroy();
+                } catch (RuntimeException ignored) {
+                    // The renderer is already gone; keep the Android UI thread alive.
+                } finally {
+                    webView = null;
+                }
+                if (!rendererRestartScheduled && !destroyed && !isFinishing()) {
+                    rendererRestartScheduled = true;
                     uiHandler.post(() -> {
                         if (destroyed || isFinishing()) return;
-                        // Do not clear the task; Android may kill a background
-                        // WebView renderer, not the customer's booking workflow.
-                        recreate();
+                        try {
+                            // Reconstruct the page without clearing the Android task.
+                            // Member JS restores the last safe booking draft.
+                            recreate();
+                        } catch (RuntimeException ignored) {
+                            finish();
+                        }
                     });
                 }
                 return true;
@@ -269,7 +283,7 @@ public class MainActivity extends Activity {
     // Supabase Edge Functions rewrite HTML responses to text/plain. Download the trusted
     // document as text first, then load those exact bytes into WebView as HTML.
     private void loadLiveApp() {
-        if (destroyed || loadingDocument) return;
+        if (destroyed || rendererGone || loadingDocument) return;
         // If the operating system has reclaimed the app moments after Home,
         // reconstruct the last trusted HTML instantly without a network roundtrip.
         long pauseAt = getSharedPreferences(FOREGROUND_STATE_PREFS, MODE_PRIVATE)
@@ -304,7 +318,7 @@ public class MainActivity extends Activity {
             if (document != null) writeCachedTrustedHtml(document);
             runOnUiThread(() -> {
                 loadingDocument = false;
-                if (destroyed || webView == null) return;
+                if (destroyed || rendererGone || webView == null) return;
                 if (document == null) {
                     Toast.makeText(this, "Aplikasi gagal dimuat. Periksa koneksi lalu buka kembali.", Toast.LENGTH_LONG).show();
                     return;
@@ -588,13 +602,18 @@ public class MainActivity extends Activity {
     // Renderer/process death recovers the current page and booking fields from storage.
 
     @Override protected void onPause() {
-        // Save the live booking sheet BEFORE Android freezes/kills the WebView.
-        // The page's visibilitychange handler is a second independent fallback.
-        if (webView != null) {
-            webView.evaluateJavascript("window.__spgMemberSaveDraft&&window.__spgMemberSaveDraft()", null);
+        // Persist before background suspension, but NEVER execute JS against a
+        // dead WebView renderer (common cause of crashes when switching apps).
+        try {
+            if (!rendererGone && webView != null) {
+                webView.evaluateJavascript(
+                        "window.__spgMemberSaveDraft&&window.__spgMemberSaveDraft()", null);
+            }
+        } catch (RuntimeException ignored) {
+            // visibilitychange + per-input persistence are independent fallbacks.
         }
         getSharedPreferences(FOREGROUND_STATE_PREFS, MODE_PRIVATE)
-                .edit().putLong("background_time", System.currentTimeMillis()).commit();
+                .edit().putLong("background_time", System.currentTimeMillis()).apply();
         super.onPause();
     }
 
@@ -611,12 +630,18 @@ public class MainActivity extends Activity {
     }
 
     @Override public void onBackPressed() {
-        if (webView != null && webView.canGoBack()) webView.goBack();
-        else super.onBackPressed();
+        if (!rendererGone && webView != null && webView.canGoBack()) {
+            webView.goBack();
+        } else {
+            // Similar to a normal consumer app: Home/Back moves the task behind
+            // other apps instead of destroying the current checkout draft.
+            moveTaskToBack(true);
+        }
     }
 
     @Override protected void onSaveInstanceState(Bundle outState) {
-        if (webView != null) webView.saveState(outState);
+        // WebView.saveState() may inflate Activity state beyond the Android Binder
+        // transaction limit. HTML/JS drafts are persisted in WebView localStorage.
         super.onSaveInstanceState(outState);
     }
 
@@ -629,10 +654,18 @@ public class MainActivity extends Activity {
         if (pendingCameraRequest != null) pendingCameraRequest.deny();
         pendingCameraRequest = null;
         if (webView != null) {
-            webView.removeJavascriptInterface("StarpointNative");
-            webView.removeJavascriptInterface("StarpointScanner");
-            webView.destroy();
+            WebView old = webView;
             webView = null;
+            try {
+                if (old.getParent() instanceof ViewGroup) {
+                    ((ViewGroup) old.getParent()).removeView(old);
+                }
+                old.removeJavascriptInterface("StarpointNative");
+                old.removeJavascriptInterface("StarpointScanner");
+                old.destroy();
+            } catch (RuntimeException ignored) {
+                // Destroying an already-terminated WebView must not crash Activity.
+            }
         }
         super.onDestroy();
     }
