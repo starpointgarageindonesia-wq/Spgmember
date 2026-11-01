@@ -1,0 +1,85 @@
+name: Build Starpoint Garage Owner v113 APK
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/build-owner-apk.yml'
+      - 'app/**'
+      - 'build.gradle'
+      - 'settings.gradle'
+      - 'gradle.properties'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build-owner:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Gradle 8.9
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Install official Android SDK 35
+        shell: bash
+        run: |
+          export ANDROID_HOME="$RUNNER_TEMP/starpoint-android-sdk"
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> "$GITHUB_ENV"
+          mkdir -p "$ANDROID_HOME/cmdline-tools"
+          curl -fLsS --retry 3 "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip" -o "$RUNNER_TEMP/cmdline-tools.zip"
+          unzip -q "$RUNNER_TEMP/cmdline-tools.zip" -d "$ANDROID_HOME/cmdline-tools"
+          mv "$ANDROID_HOME/cmdline-tools/cmdline-tools" "$ANDROID_HOME/cmdline-tools/latest"
+          (yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_HOME" --licenses) || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_HOME" 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Verify Owner configuration and Android capabilities
+        shell: bash
+        run: |
+          grep -q "applicationId 'com.starpointgarage.owner'" app/build.gradle
+          grep -q '/functions/v1/owner-app/' app/build.gradle
+          grep -q "versionCode 113" app/build.gradle
+          grep -q "START_SCREEN_DURATION_MS = 1_500L" app/src/main/java/com/starpointgarage/mobile/MainActivity.java
+          grep -q "SHORT_RETURN_WINDOW_MS = 20 \* 60_000L" app/src/main/java/com/starpointgarage/mobile/MainActivity.java
+          grep -q "protected void onResume()" app/src/main/java/com/starpointgarage/mobile/MainActivity.java
+          grep -q 'StarpointScanner' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
+          grep -q 'android.permission.CAMERA' app/src/main/AndroidManifest.xml
+          grep -q 'android:alwaysRetainTaskState="true"' app/src/main/AndroidManifest.xml
+          test -s app/src/main/res/drawable/starpoint_logo.png
+      - name: Build installable Owner v113 APK
+        run: gradle --no-daemon :app:assembleOwnerDebug
+      - name: Verify APK signing, archive integrity and package ID
+        shell: bash
+        run: |
+          mkdir -p owner-apk
+          APK_PATH=$(find app/build/outputs/apk/owner/debug -maxdepth 1 -type f -name '*.apk' -print -quit)
+          test -n "$APK_PATH"
+          cp "$APK_PATH" owner-apk/Starpoint_Garage_Owner_v113_2026-11-01.apk
+          unzip -t owner-apk/Starpoint_Garage_Owner_v113_2026-11-01.apk > /dev/null
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify owner-apk/Starpoint_Garage_Owner_v113_2026-11-01.apk
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging owner-apk/Starpoint_Garage_Owner_v113_2026-11-01.apk | grep "package: name='com.starpointgarage.owner.camera.preview113'"
+          ls -lh owner-apk/Starpoint_Garage_Owner_v113_2026-11-01.apk
+      - name: Archive signed installable Owner APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Starpoint-Garage-Owner-v113-2026-11-01
+          path: owner-apk/Starpoint_Garage_Owner_v113_2026-11-01.apk
+          if-no-files-found: error
+      - name: Publish direct Owner APK release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="spg-owner-v113-2026-11-01"
+          APK="owner-apk/Starpoint_Garage_Owner_v113_2026-11-01.apk"
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            gh release upload "$TAG" "$APK" --clobber
+          else
+            gh release create "$TAG" "$APK" --target "$GITHUB_SHA" --title "Starpoint Garage Owner v113 - 1 November 2026" --notes "Signed installable Owner Android v113 preview. Loads current live owner-app from shared Supabase project used by Member and Technician. Native splash 1.5 seconds, camera and QR scanner. APK uses package com.starpointgarage.owner.camera.preview113 and a separate debug signature; it installs separately from the original Owner production app." --prerelease
+          fi
