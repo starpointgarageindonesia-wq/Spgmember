@@ -1,4 +1,4 @@
-/* v110 - durable Member navigation/booking draft. Never stores passwords, tokens or photos. */
+/* v113 - background recovery only within 20 minutes; never persists passwords, tokens or photos. */
 (function () {
   'use strict';
   if (window.__spgMemberRecoveryV110) return;
@@ -7,7 +7,7 @@
   const KEY = 'spg_member_resume_v110';
   const PAGES = ['home','reward','qr','services','store','booking','history','account'];
   const FIELDS = ['bkMotor','bkCatFallback','bkService','bkAddon','bkVoucher','bkPoints','bkDate','bkNotes'];
-  const MAX_AGE = 7 * 24 * 60 * 60 * 1000;
+  const MAX_AGE = 20 * 60 * 1000;
   let sheetType = null;
   let restoring = false;
   let readyToSave = false;
@@ -91,7 +91,9 @@
   window.addEventListener('pagehide',persist,true);
   window.addEventListener('beforeunload',persist,true);
 
-  const saved = readSnapshot();
+  // Native launch mode decides whether this is a real task continuation.
+  // A new process after a force close must not resurrect an old booking.
+  const saved = window.__spgMemberRecoveryAllowed === false ? null : readSnapshot();
   if (!saved) {
     readyToSave = true;
     persist();
