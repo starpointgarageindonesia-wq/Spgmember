@@ -55,8 +55,8 @@ jobs:
           grep -q 'moveTaskToBack(true)' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
           grep -q 'removeView(old)' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
           ! grep -q 'webView.saveState(outState)' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
-          grep -q "versionCode 112" app/build.gradle
-          grep -q "spg-fixed-member-chrome-v113" app/src/main/java/com/starpointgarage/mobile/MainActivity.java
+          grep -q "versionCode 113" app/build.gradle
+          grep -q "spg-fixed-member-chrome-v112" app/src/main/java/com/starpointgarage/mobile/MainActivity.java
           grep -q "bottom:calc(18px" app/src/main/java/com/starpointgarage/mobile/MainActivity.java
           grep -q 'spg-member-20min-policy-v113' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
           grep -q 'restartFromDashboard' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
@@ -102,4 +102,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create spg-member-v113-twenty-minute-resume preview-apk/Starpoint_Member_v113_TwentyMinuteResume.apk --target "$GITHUB_SHA" --title "Starpoint Garage Member v113 Preview APK" --notes "Preview v113 with booking-draft persistence at modal open/input/pause, immediate task reuse without CLEAR_TASK and recovery after renderer death. Package is separate from installed production apps." --prerelease
+          gh release create spg-member-v113-twenty-minute-resume preview-apk/Starpoint_Member_v113_TwentyMinuteResume.apk --target "$GITHUB_SHA" --title "Starpoint Garage Member v113 Preview APK" --notes "Member v113 preview: keep page and booking when task remains alive under 20 minutes; start dashboard after task removal, force stop or 20 minutes in background. Authentication remains saved." --prerelease
