@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Base64;
 import android.view.Gravity;
 import android.view.View;
@@ -73,6 +74,11 @@ public class MainActivity extends Activity {
     private boolean rendererRestartScheduled;
     private static final String FOREGROUND_STATE_PREFS = "spg_member_activity_state";
     private static final long SHORT_RETURN_WINDOW_MS = 20 * 60_000L;
+    // Only an Activity still alive in THIS process counts as a warm app switch.
+    // A force stop or task removal starts a new process/task and must start fresh.
+    private static boolean taskAliveInThisProcess = false;
+    private boolean restoreUiOnDocumentLoad;
+    private long pausedAtElapsedRealtime = -1L;
 
     // Owner/Technician already call BarcodeDetector.detect(canvas) in their live pages.
     // Android WebView may omit that web API; the fallback only supplies a decoder.
@@ -126,9 +132,19 @@ public class MainActivity extends Activity {
         setContentView(root);
         long lastBackground = getSharedPreferences(FOREGROUND_STATE_PREFS, MODE_PRIVATE)
                 .getLong("background_time", 0L);
-        boolean resumingRecentTask = lastBackground > 0
-                && System.currentTimeMillis() - lastBackground < SHORT_RETURN_WINDOW_MS;
-        if (savedInstanceState == null && !resumingRecentTask) {
+        long awayMs = lastBackground > 0
+                ? System.currentTimeMillis() - lastBackground : 0L;
+        boolean withinWindow = lastBackground == 0L
+                || (awayMs >= 0L && awayMs < SHORT_RETURN_WINDOW_MS);
+        restoreUiOnDocumentLoad = taskAliveInThisProcess && withinWindow;
+        taskAliveInThisProcess = true;
+        if (!restoreUiOnDocumentLoad) {
+            // Fresh launch (including force stop or swipe-away) displays splash
+            // and then the dashboard if this customer has already logged in.
+            getSharedPreferences(FOREGROUND_STATE_PREFS, MODE_PRIVATE)
+                    .edit().remove("background_time").apply();
+        }
+        if (!restoreUiOnDocumentLoad) {
             uiHandler.postDelayed(() -> {
                 if (!destroyed && startScreen != null) startScreen.setVisibility(View.GONE);
             }, START_SCREEN_DURATION_MS);
@@ -288,8 +304,9 @@ public class MainActivity extends Activity {
         // reconstruct the last trusted HTML instantly without a network roundtrip.
         long pauseAt = getSharedPreferences(FOREGROUND_STATE_PREFS, MODE_PRIVATE)
                 .getLong("background_time", 0L);
-        boolean warmRestart = pauseAt > 0
-                && System.currentTimeMillis() - pauseAt < SHORT_RETURN_WINDOW_MS;
+        long awayMs = pauseAt > 0 ? System.currentTimeMillis() - pauseAt : -1L;
+        boolean warmRestart = restoreUiOnDocumentLoad && pauseAt > 0
+                && awayMs >= 0L && awayMs < SHORT_RETURN_WINDOW_MS;
         if (warmRestart) {
             String cached = readCachedTrustedHtml();
             if (cached != null) {
@@ -376,6 +393,19 @@ public class MainActivity extends Activity {
     // This wrapper injects only a local, non-sensitive UI draft recovery helper.
     private String addMemberStateRecovery(String html) {
         if (!BuildConfig.APP_URL.contains("member-app")) return html;
+        // Run before the hosted application's own scripts. UI drafts are
+        // transient; auth/localStorage sessions are NOT cleared.
+        String launchPolicy = "<script id=\"spg-member-20min-policy-v113\">"
+                + "window.__spgMemberRecoveryAllowed=" + restoreUiOnDocumentLoad + ";"
+                + (restoreUiOnDocumentLoad ? "" :
+                    "try{localStorage.removeItem('spg_member_resume_v110');"
+                  + "localStorage.removeItem('spg_member_ui_draft_v109');}catch(e){}")
+                + "</script>";
+        int headStart = html.indexOf("<head>");
+        if (headStart >= 0) {
+            html = html.substring(0, headStart + 6)
+                    + launchPolicy + html.substring(headStart + 6);
+        }
         // Member v112: only layout adjustments requested by owner.
         // Fixed header and raised bottom tabs remain correct even if a warm
         // launch uses cached trusted HTML from an older Edge Function.
@@ -622,6 +652,7 @@ public class MainActivity extends Activity {
     // Renderer/process death recovers the current page and booking fields from storage.
 
     @Override protected void onPause() {
+        pausedAtElapsedRealtime = SystemClock.elapsedRealtime();
         // Persist before background suspension, but NEVER execute JS against a
         // dead WebView renderer (common cause of crashes when switching apps).
         try {
@@ -635,6 +666,47 @@ public class MainActivity extends Activity {
         getSharedPreferences(FOREGROUND_STATE_PREFS, MODE_PRIVATE)
                 .edit().putLong("background_time", System.currentTimeMillis()).apply();
         super.onPause();
+    }
+
+    @Override protected void onResume() {
+        super.onResume();
+        if (pausedAtElapsedRealtime < 0L || destroyed) return;
+        long awayMs = SystemClock.elapsedRealtime() - pausedAtElapsedRealtime;
+        pausedAtElapsedRealtime = -1L;
+        if (awayMs >= SHORT_RETURN_WINDOW_MS || awayMs < 0L) {
+            // Twenty minutes in the background: discard the old page and draft,
+            // but keep customer authentication and confirmed server bookings.
+            restartFromDashboard();
+        }
+        // Below twenty minutes: no WebView reload, no splash, no form reset.
+    }
+
+    private void restartFromDashboard() {
+        restoreUiOnDocumentLoad = false;
+        getSharedPreferences(FOREGROUND_STATE_PREFS, MODE_PRIVATE)
+                .edit().remove("background_time").apply();
+        if (startScreen != null) {
+            startScreen.setVisibility(View.VISIBLE);
+            uiHandler.postDelayed(() -> {
+                if (!destroyed && startScreen != null)
+                    startScreen.setVisibility(View.GONE);
+            }, START_SCREEN_DURATION_MS);
+        }
+        if (rendererGone || webView == null) return;
+        // Rebuild from the trusted cached document so there is no network wait.
+        // The early launch-policy script deletes the abandoned UI draft first.
+        String cached = readCachedTrustedHtml();
+        if (cached != null) {
+            try {
+                webView.loadDataWithBaseURL(BuildConfig.APP_URL,
+                        addMemberStateRecovery(cached),
+                        "text/html", "UTF-8", BuildConfig.APP_URL);
+                return;
+            } catch (RuntimeException ignored) {
+                // Fall through to a fresh network download.
+            }
+        }
+        loadLiveApp();
     }
 
     @Override protected void onNewIntent(Intent intent) {
@@ -666,6 +738,11 @@ public class MainActivity extends Activity {
     }
 
     @Override protected void onDestroy() {
+        // Activity closed, including swiping the task from Recents.
+        // A renderer recovery recreate() is not an intentional close.
+        if (!isChangingConfigurations() && !rendererRestartScheduled) {
+            taskAliveInThisProcess = false;
+        }
         destroyed = true;
         uiHandler.removeCallbacksAndMessages(null);
         startScreen = null;
