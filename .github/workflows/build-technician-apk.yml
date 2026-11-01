@@ -1,0 +1,81 @@
+name: Build Starpoint Garage Teknisi APK (current live technician)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/build-technician-apk.yml'
+      - 'app/**'
+      - 'build.gradle'
+      - 'settings.gradle'
+      - 'gradle.properties'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build-technician:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout Android source
+        uses: actions/checkout@v4
+      - name: Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Gradle 8.9
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Install official Android 35 toolchain
+        shell: bash
+        run: |
+          export ANDROID_HOME="$RUNNER_TEMP/starpoint-android-sdk"
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> "$GITHUB_ENV"
+          mkdir -p "$ANDROID_HOME/cmdline-tools"
+          curl -fLsS --retry 3 "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip" -o "$RUNNER_TEMP/cmdline-tools.zip"
+          unzip -q "$RUNNER_TEMP/cmdline-tools.zip" -d "$ANDROID_HOME/cmdline-tools"
+          mv "$ANDROID_HOME/cmdline-tools/cmdline-tools" "$ANDROID_HOME/cmdline-tools/latest"
+          (yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_HOME" --licenses) || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_HOME" 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Verify technician app URL and camera scanner support
+        shell: bash
+        run: |
+          grep -q "applicationId 'com.starpointgarage.technician'" app/build.gradle
+          grep -q '/functions/v1/technician-app/' app/build.gradle
+          grep -q "START_SCREEN_DURATION_MS = 1_500L" app/src/main/java/com/starpointgarage/mobile/MainActivity.java
+          grep -q 'StarpointScanner' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
+          grep -q 'android.permission.CAMERA' app/src/main/AndroidManifest.xml
+          test -s app/src/main/res/drawable/starpoint_logo.png
+      - name: Build installable Technician APK
+        run: gradle --no-daemon :app:assembleTechnicianDebug
+      - name: Validate APK, signing and package ID
+        shell: bash
+        run: |
+          mkdir -p technician-apk
+          APK_PATH=$(find app/build/outputs/apk/technician/debug -maxdepth 1 -type f -name '*.apk' -print -quit)
+          test -n "$APK_PATH"
+          cp "$APK_PATH" technician-apk/Starpoint_Garage_Teknisi_2026-11-01.apk
+          unzip -t technician-apk/Starpoint_Garage_Teknisi_2026-11-01.apk > /dev/null
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify technician-apk/Starpoint_Garage_Teknisi_2026-11-01.apk
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging technician-apk/Starpoint_Garage_Teknisi_2026-11-01.apk | grep "package: name='com.starpointgarage.technician.camera.preview113'"
+          ls -lh technician-apk/Starpoint_Garage_Teknisi_2026-11-01.apk
+      - name: Archive installable Technician APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Starpoint-Garage-Teknisi-2026-11-01-APK
+          path: technician-apk/Starpoint_Garage_Teknisi_2026-11-01.apk
+          if-no-files-found: error
+      - name: Publish direct APK release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="spg-teknisi-2026-11-01"
+          FILE="technician-apk/Starpoint_Garage_Teknisi_2026-11-01.apk"
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            gh release upload "$TAG" "$FILE" --clobber
+          else
+            gh release create "$TAG" "$FILE" --target "$GITHUB_SHA" --title "Starpoint Garage Teknisi - 1 November 2026" --notes "Installable signed Technician preview build from current Starpoint Android wrapper. Live backend technician-app version 16. Splash original 1.5 seconds, camera and QR scanner support. Package: com.starpointgarage.technician.camera.preview113. Because this uses a separate preview debug signature, it installs separately rather than updating an older production Technician package." --prerelease
+          fi
