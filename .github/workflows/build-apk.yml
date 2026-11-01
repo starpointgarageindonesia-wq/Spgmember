@@ -1,4 +1,4 @@
-name: Build Starpoint Garage Member v112 (installable preview + unsigned release)
+name: Build Starpoint Garage Member v113 (installable preview + unsigned release)
 on:
   push:
     branches: [main]
@@ -37,7 +37,7 @@ jobs:
         shell: bash
         run: |
           ! grep -q 'lastBackgroundAt' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
-          ! grep -q 'protected void onResume()' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
+          grep -q 'protected void onResume()' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
           grep -q 'alwaysRetainTaskState' app/src/main/AndroidManifest.xml
           grep -q 'launchMode="singleTask"' app/src/main/AndroidManifest.xml
           grep -q 'onRenderProcessGone' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
@@ -56,8 +56,14 @@ jobs:
           grep -q 'removeView(old)' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
           ! grep -q 'webView.saveState(outState)' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
           grep -q "versionCode 112" app/build.gradle
-          grep -q "spg-fixed-member-chrome-v112" app/src/main/java/com/starpointgarage/mobile/MainActivity.java
+          grep -q "spg-fixed-member-chrome-v113" app/src/main/java/com/starpointgarage/mobile/MainActivity.java
           grep -q "bottom:calc(18px" app/src/main/java/com/starpointgarage/mobile/MainActivity.java
+          grep -q 'spg-member-20min-policy-v113' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
+          grep -q 'restartFromDashboard' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
+          grep -q 'taskAliveInThisProcess' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
+          grep -q 'onResume()' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
+          grep -q 'const MAX_AGE = 20 \* 60 \* 1000' app/src/main/assets/member_state_recovery.js
+          grep -q 'window.__spgMemberRecoveryAllowed === false' app/src/main/assets/member_state_recovery.js
       - name: Build Member release unsigned
         run: gradle --no-daemon :app:assembleMemberRelease
       - name: Collect APK and signing utility (NO PRIVATE KEYS)
@@ -65,12 +71,12 @@ jobs:
         run: |
           mkdir -p build-for-local-signing
           find app/build/outputs/apk/member/release -maxdepth 1 -type f -print
-          cp app/build/outputs/apk/member/release/*unsigned.apk build-for-local-signing/Starpoint_Member_v112_unsigned.apk
+          cp app/build/outputs/apk/member/release/*unsigned.apk build-for-local-signing/Starpoint_Member_v113_unsigned.apk
           cp "$ANDROID_HOME/build-tools/35.0.0/lib/apksigner.jar" build-for-local-signing/apksigner.jar
       - name: Upload unsigned APK and official apksigner
         uses: actions/upload-artifact@v4
         with:
-          name: Starpoint-Member-v112-ToSign
+          name: Starpoint-Member-v113-ToSign
           path: build-for-local-signing/*
           if-no-files-found: error
 
@@ -82,18 +88,18 @@ jobs:
           mkdir -p preview-apk
           APK_PATH=$(find app/build/outputs/apk/member/debug -maxdepth 1 -type f -name '*.apk' -print -quit)
           test -n "$APK_PATH"
-          cp "$APK_PATH" preview-apk/Starpoint_Member_v112_FixedHeaderNav.apk
-          unzip -t preview-apk/Starpoint_Member_v112_FixedHeaderNav.apk >/dev/null
-          ls -lh preview-apk/Starpoint_Member_v112_FixedHeaderNav.apk
+          cp "$APK_PATH" preview-apk/Starpoint_Member_v113_TwentyMinuteResume.apk
+          unzip -t preview-apk/Starpoint_Member_v113_TwentyMinuteResume.apk >/dev/null
+          ls -lh preview-apk/Starpoint_Member_v113_TwentyMinuteResume.apk
       - name: Archive installable preview APK
         uses: actions/upload-artifact@v4
         with:
-          name: Starpoint-Member-v112-fixed-header-nav-APK
-          path: preview-apk/Starpoint_Member_v112_FixedHeaderNav.apk
+          name: Starpoint-Member-v113-twenty-minute-resume-APK
+          path: preview-apk/Starpoint_Member_v113_TwentyMinuteResume.apk
           if-no-files-found: error
       - name: Publish direct APK download as prerelease
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create spg-member-v112-fixed-header-nav preview-apk/Starpoint_Member_v112_FixedHeaderNav.apk --target "$GITHUB_SHA" --title "Starpoint Garage Member v112 Preview APK" --notes "Preview v112 with booking-draft persistence at modal open/input/pause, immediate task reuse without CLEAR_TASK and recovery after renderer death. Package is separate from installed production apps." --prerelease
+          gh release create spg-member-v113-twenty-minute-resume preview-apk/Starpoint_Member_v113_TwentyMinuteResume.apk --target "$GITHUB_SHA" --title "Starpoint Garage Member v113 Preview APK" --notes "Preview v113 with booking-draft persistence at modal open/input/pause, immediate task reuse without CLEAR_TASK and recovery after renderer death. Package is separate from installed production apps." --prerelease
