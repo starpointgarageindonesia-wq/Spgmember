@@ -200,7 +200,10 @@ public class MainActivity extends Activity {
                     callback.onReceiveValue(null);
                     return true;
                 }
-                if (pendingPaymentFileChooser != null) pendingPaymentFileChooser.onReceiveValue(null);
+                if (pendingPaymentFileChooser != null) {
+                    try { pendingPaymentFileChooser.onReceiveValue(null); }
+                    catch (RuntimeException ex) { Log.w(LOG_TAG, "Previous file chooser already closed", ex); }
+                }
                 pendingPaymentFileChooser = callback;
                 try {
                     Intent pick = new Intent(Intent.ACTION_GET_CONTENT);
@@ -212,7 +215,8 @@ public class MainActivity extends Activity {
                     startActivityForResult(Intent.createChooser(pick, "Pilih Foto Bukti Pembayaran"), PAYMENT_IMAGE_REQUEST);
                 } catch (Exception ex) {
                     pendingPaymentFileChooser = null;
-                    callback.onReceiveValue(null);
+                    try { callback.onReceiveValue(null); }
+                    catch (RuntimeException callbackError) { Log.w(LOG_TAG, "File chooser renderer exited", callbackError); }
                     Toast.makeText(MainActivity.this, "Galeri tidak dapat dibuka", Toast.LENGTH_LONG).show();
                 }
                 return true;
@@ -565,7 +569,8 @@ public class MainActivity extends Activity {
                 if (clipUri != null && "content".equalsIgnoreCase(clipUri.getScheme())) selected = new Uri[]{clipUri};
             }
         }
-        callback.onReceiveValue(selected);
+        try { callback.onReceiveValue(selected); }
+        catch (RuntimeException ex) { Log.w(LOG_TAG, "File chooser callback after renderer exit", ex); }
     }
 
     private boolean handleUrl(Uri uri) {
