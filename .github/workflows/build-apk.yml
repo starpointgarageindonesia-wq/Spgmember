@@ -2,6 +2,8 @@ name: Build Starpoint Garage Member v113 (installable preview + unsigned release
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: write
@@ -41,6 +43,8 @@ jobs:
           grep -q 'alwaysRetainTaskState' app/src/main/AndroidManifest.xml
           grep -q 'launchMode="singleTask"' app/src/main/AndroidManifest.xml
           grep -q 'onRenderProcessGone' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
+          grep -q 'allowAutomaticRendererRecovery' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
+          grep -q 'trustedCurrentUrl' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
           grep -q 'addMemberStateRecovery' app/src/main/java/com/starpointgarage/mobile/MainActivity.java
           test -s app/src/main/assets/member_state_recovery.js
           node --check app/src/main/assets/member_state_recovery.js
@@ -98,6 +102,7 @@ jobs:
           path: preview-apk/Starpoint_Member_v113_TwentyMinuteResume.apk
           if-no-files-found: error
       - name: Publish direct APK download as prerelease
+        if: github.event_name != 'pull_request'
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
