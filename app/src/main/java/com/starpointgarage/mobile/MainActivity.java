@@ -2,6 +2,7 @@ package com.starpointgarage.mobile;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,6 +16,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -62,6 +64,10 @@ public class MainActivity extends Activity {
     private static final int PAYMENT_IMAGE_REQUEST = 406;
     private static final long START_SCREEN_DURATION_MS = 1_500L;
     private static final String TRUSTED_HOST = "msvdxyicostwztisvbvl.supabase.co";
+    private static final String LOG_TAG = "StarpointWebView";
+    private static final long RENDERER_RETRY_WINDOW_MS = 60_000L;
+    private static long lastRendererExitElapsedMs = -1L;
+    private static int rendererExitCount = 0;
     private WebView webView;
     private FrameLayout startScreen;
     private PermissionRequest pendingCameraRequest;
@@ -190,7 +196,7 @@ public class MainActivity extends Activity {
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {
-                if (destroyed || !trusted(Uri.parse(view.getUrl()))) {
+                if (destroyed || rendererGone || !trustedCurrentUrl(view)) {
                     callback.onReceiveValue(null);
                     return true;
                 }
@@ -237,31 +243,46 @@ public class MainActivity extends Activity {
 
             @Override
             public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
-                // Android may terminate a WebView renderer while the customer is in
-                // another application. Avoid any interaction with the dead renderer.
+                // A dead renderer must be detached and destroyed before this callback
+                // returns. Recreating forever on devices with a broken WebView creates
+                // a repeated app-stop loop; cap automatic retries.
                 if (webView != view) return true;
                 rendererGone = true;
+                Log.e(LOG_TAG, "WebView renderer exited; didCrash=" + (detail != null && detail.didCrash()));
                 try {
                     if (view.getParent() instanceof ViewGroup) {
                         ((ViewGroup) view.getParent()).removeView(view);
                     }
                     view.destroy();
-                } catch (RuntimeException ignored) {
-                    // The renderer is already gone; keep the Android UI thread alive.
+                } catch (RuntimeException ex) {
+                    Log.w(LOG_TAG, "Failed to destroy terminated renderer", ex);
                 } finally {
                     webView = null;
                 }
-                if (!rendererRestartScheduled && !destroyed && !isFinishing()) {
+                if (destroyed || isFinishing() || rendererRestartScheduled) return true;
+                if (allowAutomaticRendererRecovery()) {
                     rendererRestartScheduled = true;
                     uiHandler.post(() -> {
                         if (destroyed || isFinishing()) return;
                         try {
-                            // Reconstruct the page without clearing the Android task.
-                            // Member JS restores the last safe booking draft.
-                            recreate();
-                        } catch (RuntimeException ignored) {
+                            recreate(); // Keep auth and recover safe drafts as before.
+                        } catch (RuntimeException ex) {
+                            Log.e(LOG_TAG, "Unable to restart WebView activity", ex);
                             finish();
                         }
+                    });
+                } else {
+                    uiHandler.post(() -> {
+                        if (destroyed || isFinishing()) return;
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("Aplikasi perlu dimuat ulang")
+                                .setMessage("Tampilan aplikasi berhenti berulang. Coba lagi setelah memperbarui Android System WebView dan Chrome.")
+                                .setPositiveButton("Coba lagi", (dialog, which) -> {
+                                    if (!destroyed && !isFinishing()) recreate();
+                                })
+                                .setNegativeButton("Tutup", (dialog, which) -> finish())
+                                .setCancelable(false)
+                                .show();
                     });
                 }
                 return true;
@@ -269,7 +290,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                if (!destroyed && trusted(Uri.parse(url)) && !BuildConfig.APP_URL.contains("member-app")) {
+                if (!destroyed && !rendererGone && trustedCurrentUrl(view) && !BuildConfig.APP_URL.contains("member-app")) {
                     view.evaluateJavascript(SCANNER_FALLBACK, null);
                 }
             }
@@ -279,6 +300,26 @@ public class MainActivity extends Activity {
         // restoreState succeeds. Load the trusted document and restore the user's page
         // and unfinished booking from localStorage instead of restoring a blank history.
         loadLiveApp();
+    }
+
+    private static synchronized boolean allowAutomaticRendererRecovery() {
+        long now = SystemClock.elapsedRealtime();
+        if (lastRendererExitElapsedMs < 0L || now < lastRendererExitElapsedMs
+                || now - lastRendererExitElapsedMs > RENDERER_RETRY_WINDOW_MS) {
+            rendererExitCount = 0;
+        }
+        lastRendererExitElapsedMs = now;
+        return ++rendererExitCount <= 2;
+    }
+
+    private static boolean trustedCurrentUrl(WebView view) {
+        if (view == null) return false;
+        try {
+            String url = view.getUrl();
+            return url != null && trusted(Uri.parse(url));
+        } catch (RuntimeException ex) {
+            return false; // Renderer disappeared while Android was reading the URL.
+        }
     }
 
     private static boolean trusted(Uri uri) {
@@ -641,7 +682,7 @@ public class MainActivity extends Activity {
             } catch (Exception ignored) { /* A frame often does not contain a readable QR. */ }
             final String response = value;
             runOnUiThread(() -> {
-                if (destroyed || webView == null || !trusted(Uri.parse(webView.getUrl()))) return;
+                if (destroyed || rendererGone || !trustedCurrentUrl(webView)) return;
                 webView.evaluateJavascript("window.__starpointScannerDone&&window.__starpointScannerDone("
                         + id + "," + (response == null ? "null" : JSONObject.quote(response)) + ")", null);
             });
@@ -747,8 +788,15 @@ public class MainActivity extends Activity {
         uiHandler.removeCallbacksAndMessages(null);
         startScreen = null;
         networkExecutor.shutdownNow();
-        if (pendingPaymentFileChooser != null) {pendingPaymentFileChooser.onReceiveValue(null); pendingPaymentFileChooser = null;}
-        if (pendingCameraRequest != null) pendingCameraRequest.deny();
+        if (pendingPaymentFileChooser != null) {
+            try { pendingPaymentFileChooser.onReceiveValue(null); }
+            catch (RuntimeException ex) { Log.w(LOG_TAG, "File chooser renderer already gone", ex); }
+            pendingPaymentFileChooser = null;
+        }
+        if (pendingCameraRequest != null) {
+            try { pendingCameraRequest.deny(); }
+            catch (RuntimeException ex) { Log.w(LOG_TAG, "Camera request renderer already gone", ex); }
+        }
         pendingCameraRequest = null;
         if (webView != null) {
             WebView old = webView;
