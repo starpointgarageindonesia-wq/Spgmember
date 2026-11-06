@@ -374,4 +374,92 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
+
+    /* Dokumentasi owner dan tenant — slideshow header Home */
+    const ciStoryCarousel = document.getElementById("ciOwnerTenantSlider");
+    if (ciStoryCarousel) {
+        const frames = Array.from(ciStoryCarousel.querySelectorAll("[data-ci-story-slide]"));
+        const dots = Array.from(ciStoryCarousel.querySelectorAll("[data-ci-to]"));
+        const counter = ciStoryCarousel.querySelector("[data-ci-story-count]");
+        const prefersReducedMotion = window.matchMedia &&
+            window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        let currentPhoto = 0;
+        let isHovering = false;
+        let isFocused = false;
+        let startTouchX = null;
+
+        function setPhoto(index) {
+            if (!frames.length) return;
+            currentPhoto = (index + frames.length) % frames.length;
+
+            frames.forEach((frame, i) => {
+                const isCurrent = i === currentPhoto;
+                frame.classList.toggle("ci-is-current", isCurrent);
+                frame.setAttribute("aria-hidden", isCurrent ? "false" : "true");
+            });
+
+            dots.forEach((dot, i) => {
+                const isCurrent = i === currentPhoto;
+                dot.classList.toggle("ci-is-current", isCurrent);
+                dot.setAttribute("aria-pressed", isCurrent ? "true" : "false");
+            });
+
+            if (counter) counter.textContent =
+                String(currentPhoto + 1).padStart(2, "0");
+        }
+
+        ciStoryCarousel.addEventListener("click", (event) => {
+            const arrow = event.target.closest("[data-ci-step]");
+            const dot = event.target.closest("[data-ci-to]");
+            if (arrow) setPhoto(currentPhoto + Number(arrow.dataset.ciStep));
+            else if (dot) setPhoto(Number(dot.dataset.ciTo));
+        });
+
+        ciStoryCarousel.addEventListener("keydown", (event) => {
+            if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+            event.preventDefault();
+            event.stopPropagation();
+            setPhoto(currentPhoto + (event.key === "ArrowRight" ? 1 : -1));
+        });
+
+        ciStoryCarousel.addEventListener("mouseenter", () => {
+            isHovering = true;
+        });
+        ciStoryCarousel.addEventListener("mouseleave", () => {
+            isHovering = false;
+        });
+        ciStoryCarousel.addEventListener("focusin", () => {
+            isFocused = true;
+        });
+        ciStoryCarousel.addEventListener("focusout", (event) => {
+            if (!ciStoryCarousel.contains(event.relatedTarget)) {
+                isFocused = false;
+            }
+        });
+
+        ciStoryCarousel.addEventListener("touchstart", (event) => {
+            startTouchX = event.touches[0]?.clientX ?? null;
+        }, { passive: true });
+        ciStoryCarousel.addEventListener("touchend", (event) => {
+            if (startTouchX === null) return;
+            const endX = event.changedTouches[0]?.clientX;
+            const deltaX = typeof endX === "number" ? endX - startTouchX : 0;
+            startTouchX = null;
+            if (Math.abs(deltaX) > 40) {
+                setPhoto(currentPhoto + (deltaX < 0 ? 1 : -1));
+            }
+        }, { passive: true });
+
+        if (!prefersReducedMotion && frames.length > 1) {
+            window.setInterval(() => {
+                // Don't move photos while hidden, hovered, or keyboard-operated.
+                if (document.hidden || isHovering || isFocused) return;
+                if (ciStoryCarousel.getClientRects().length === 0) return;
+                setPhoto(currentPhoto + 1);
+            }, 4500);
+        }
+
+        setPhoto(0);
+    }
+
 });
