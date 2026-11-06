@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const slides = document.querySelectorAll(".slide");
 
     const navItems = document.querySelectorAll(
-        ".bottom-nav .nav-item"
+        ".bottom-nav .nav-item, .desktop-navigation .nav-item"
     );
 
     function showSlide(targetId) {
