@@ -373,4 +373,91 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
+
+    /* Rotating Home photos using Cireng Indi's four archived product banners. */
+    const ciCarousel = document.getElementById("ciHomeCarousel");
+    if (ciCarousel) {
+        const ciSlides = Array.from(ciCarousel.querySelectorAll(".ci-home-banner-slide"));
+        const ciDots = Array.from(ciCarousel.querySelectorAll(".ci-home-banner-dot"));
+        const ciCurrent = ciCarousel.querySelector("[data-ci-current]");
+        const ciReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        let ciIndex = 0;
+        let ciPointerX = null;
+        let ciMouseHover = false;
+        let ciFocusWithin = false;
+
+        function ciSetActive(next) {
+            if (!ciSlides.length) return;
+            ciIndex = (next + ciSlides.length) % ciSlides.length;
+            ciSlides.forEach((slide, i) => {
+                const active = i === ciIndex;
+                slide.classList.toggle("is-active", active);
+                slide.setAttribute("aria-hidden", active ? "false" : "true");
+                const cta = slide.querySelector(".ci-home-banner-link");
+                if (cta) cta.tabIndex = active ? 0 : -1;
+            });
+            ciDots.forEach((dot, i) => {
+                const active = i === ciIndex;
+                dot.classList.toggle("is-active", active);
+                dot.setAttribute("aria-pressed", active ? "true" : "false");
+            });
+            if (ciCurrent) ciCurrent.textContent = String(ciIndex + 1).padStart(2, "0");
+        }
+
+        ciCarousel.addEventListener("click", (event) => {
+            const arrow = event.target.closest("[data-ci-dir]");
+            const dot = event.target.closest("[data-ci-goto]");
+            const open = event.target.closest("[data-ci-open]");
+            if (arrow) ciSetActive(ciIndex + Number(arrow.dataset.ciDir));
+            else if (dot) ciSetActive(Number(dot.dataset.ciGoto));
+            else if (open) {
+                const target = open.dataset.ciOpen;
+                if (document.getElementById(target)) {
+                    showSlide(target);
+                    history.replaceState(null, "", "#" + target);
+                }
+            }
+        });
+
+        ciCarousel.addEventListener("keydown", (event) => {
+            if (event.key === "ArrowRight") {
+                event.preventDefault();
+                event.stopPropagation();
+                ciSetActive(ciIndex + 1);
+            } else if (event.key === "ArrowLeft") {
+                event.preventDefault();
+                event.stopPropagation();
+                ciSetActive(ciIndex - 1);
+            }
+        });
+        ciCarousel.addEventListener("pointerenter", event => {
+            if (event.pointerType === "mouse") ciMouseHover = true;
+        });
+        ciCarousel.addEventListener("pointerleave", () => { ciMouseHover = false; });
+        ciCarousel.addEventListener("focusin", () => { ciFocusWithin = true; });
+        ciCarousel.addEventListener("focusout", event => {
+            if (!ciCarousel.contains(event.relatedTarget)) ciFocusWithin = false;
+        });
+        ciCarousel.addEventListener("touchstart", event => {
+            ciPointerX = event.touches[0]?.clientX ?? null;
+        }, {passive:true});
+        ciCarousel.addEventListener("touchend", event => {
+            if (ciPointerX === null) return;
+            const endX = event.changedTouches[0]?.clientX;
+            const delta = (typeof endX === "number") ? endX - ciPointerX : 0;
+            ciPointerX = null;
+            if (Math.abs(delta) > 45) ciSetActive(ciIndex + (delta < 0 ? 1 : -1));
+        }, {passive:true});
+
+        // Move every 4.5 seconds; pause when Home is hidden or actively controlled.
+        if (!ciReducedMotion && ciSlides.length > 1) {
+            window.setInterval(() => {
+                if (document.hidden || ciMouseHover || ciFocusWithin) return;
+                if (ciCarousel.getClientRects().length === 0) return;
+                ciSetActive(ciIndex + 1);
+            }, 4500);
+        }
+        ciSetActive(0);
+    }
+
 });
