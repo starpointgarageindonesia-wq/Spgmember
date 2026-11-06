@@ -1232,3 +1232,119 @@ body{padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-reduced-motion:reduce) {
   .ci-story-frame,.ci-story-dot{transition:none!important}
 }
+
+
+/* CIRENG HOME TWO COLUMN SPLIT
+   iPad/desktop: 50% real-photo slider + 50% Tentang Kami.
+   No wide empty blurred margins. Mobile stays vertically stacked. */
+.ci-home-overview { width:100%; min-width:0; }
+.ci-home-gallery, .ci-home-about { min-width:0; }
+.ci-home-about .slide-header { margin-bottom:14px; }
+.ci-home-about .about-card { margin-bottom:0; }
+.ci-home-details { margin-top:20px; }
+
+@media(min-width:700px) {
+  #tentang .ci-home-overview {
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:clamp(16px,2.5vw,30px);
+    align-items:stretch;
+    margin-bottom:22px;
+  }
+  #tentang .ci-home-gallery {
+    display:flex;
+    min-width:0;
+    min-height:0;
+  }
+  #tentang .ci-story-carousel {
+    width:100%;
+    height:auto;
+    min-height:490px;
+    max-height:none;
+    aspect-ratio:auto;
+    flex:1;
+    margin:0;
+    border-radius:20px;
+  }
+  #tentang .ci-story-backdrop {display:none;}
+  #tentang .ci-story-photo {
+    object-fit:cover;
+    object-position:center 50%;
+    filter:brightness(1.025) contrast(1.015) saturate(.96);
+  }
+  #tentang .ci-story-frame[data-ci-story-slide="0"] .ci-story-photo {object-position:50% 48%;}
+  #tentang .ci-story-frame[data-ci-story-slide="1"] .ci-story-photo {object-position:50% 52%;}
+  #tentang .ci-story-frame[data-ci-story-slide="2"] .ci-story-photo {object-position:50% 44%;}
+  #tentang .ci-story-frame[data-ci-story-slide="3"] .ci-story-photo {object-position:50% 50%;}
+  #tentang .ci-story-frame[data-ci-story-slide="4"] .ci-story-photo {object-position:50% 50%;}
+  #tentang .ci-story-caption {left:18px;right:18px;bottom:44px;}
+  #tentang .ci-story-caption strong{font-size:clamp(19px,2.35vw,30px);}
+  #tentang .ci-story-caption>span:last-child{font-size:clamp(10px,1.15vw,13px);}
+  #tentang .ci-home-about {
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+    justify-content:stretch;
+    gap:12px;
+  }
+  #tentang .ci-home-about .slide-header {margin:0;}
+  #tentang .ci-home-about .slide-header h2 {font-size:clamp(30px,3.1vw,41px);}
+  #tentang .ci-home-about .slide-header p {font-size:clamp(18px,2vw,24px);}
+  #tentang .ci-home-about .about-card {
+    flex:1;
+    min-width:0;
+    margin:0;
+    padding:clamp(20px,2.5vw,30px);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    border-radius:20px;
+  }
+  #tentang .ci-home-about .about-card h3{font-size:17px;margin-bottom:15px;}
+  #tentang .ci-home-about .about-card p{
+    font-size:clamp(13px,1.32vw,16px);
+    line-height:1.75;
+    margin-bottom:14px;
+  }
+  #tentang .ci-home-about .about-card p:last-child{margin-bottom:0;}
+  #tentang .ci-home-about .about-card .about-quote{font-size:clamp(15px,1.45vw,18px)!important;}
+  #tentang .ci-home-details{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    align-items:stretch;
+    gap:15px;
+    margin-top:20px;
+  }
+  #tentang .ci-home-details > * {min-width:0;margin:0;}
+  #tentang .ci-home-details .info-card {height:100%;}
+}
+@media (min-width:700px) and (max-width:920px){
+  #tentang .ci-story-carousel{min-height:535px;}
+  #tentang .ci-home-about .about-card {padding:20px;}
+  #tentang .ci-home-about .about-card p{font-size:13px;line-height:1.7;}
+  #tentang .ci-home-details{grid-template-columns:repeat(2,minmax(0,1fr));}
+  #tentang .ci-home-details .maps-card{grid-column:1 / -1;}
+}
+@media(max-width:699px){
+  #tentang .ci-home-overview{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+  #tentang .ci-story-carousel{
+    margin:0;
+    aspect-ratio:4 / 5;
+    min-height:330px;
+    max-height:440px;
+    background:#5c3f34;
+  }
+  #tentang .ci-story-backdrop{display:none;}
+  #tentang .ci-story-photo{
+    object-fit:cover;
+    object-position:center;
+    filter:brightness(1.025) contrast(1.02) saturate(.96);
+  }
+  #tentang .ci-home-about .slide-header{margin-bottom:14px;}
+  #tentang .ci-home-about .about-card{margin:0;}
+  #tentang .ci-home-details{margin-top:16px;}
+}
