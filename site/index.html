@@ -1,192 +1,1136 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#a90f16">
-  <meta name="description" content="Cireng Indi — frozen food dan jamu rumahan sejak 2015 di Tanah Grogot. Jelajahi 31 pilihan camilan, lauk frozen, jamu, dan pesan mudah lewat WhatsApp.">
-  <meta property="og:type" content="website">
-  <meta property="og:locale" content="id_ID">
-  <meta property="og:title" content="Cireng Indi — Frozen Food & Jamu Rumahan">
-  <meta property="og:description" content="Camilan favorit, lauk praktis, dan jamu rumahan. Pesan cepat lewat WhatsApp.">
-  <meta property="og:image" content="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_banner_01.webp">
-  <link rel="canonical" href="https://cirengindi.com/">
-  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/logo_cireng_indi.png">
-  <title>Cireng Indi | Frozen Food & Jamu Rumahan di Tanah Grogot</title>
-  <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
-  <link rel="stylesheet" href="./styles.css">
-  <script defer src="./app.js"></script>
-  <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FoodEstablishment","name":"Cireng Indi","url":"https://cirengindi.com/","description":"Frozen food dan jamu rumahan sejak 2015 di Tanah Grogot.","image":"https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_01.webp","telephone":"+6282254710903","address":{"@type":"PostalAddress","streetAddress":"Jl. Khaliluddin, Gg. Nusa Indah 4","addressLocality":"Tanah Grogot","addressRegion":"Kalimantan Timur","addressCountry":"ID"},"sameAs":["https://www.instagram.com/indi_fanova_ownercireng/"]}
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cireng Indi | Frozen Food & Jamu Rumahan</title>
+
+    <meta
+        name="description"
+        content="Cireng Indi - Frozen Food & Jamu Rumahan sejak 2015."
+    >
+
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/logo_cireng_indi.png">
+    <meta name="theme-color" content="#a50909">
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <a class="skip-link" href="#menu">Langsung ke menu</a>
-  <div class="announcement"><span class="sparkle">✦</span> Cita rasa rumahan sejak 2015 <span class="announcement-sep">•</span> Tanah Grogot, Kalimantan Timur <span class="sparkle">✦</span></div>
-  <header class="site-header" id="top">
-    <div class="container header-inner">
-      <a class="brand" href="#beranda" aria-label="Cireng Indi Beranda">
-        <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/logo_cireng_indi.png" alt="Logo Cireng Indi" width="60" height="60">
-        <span><strong>Cireng Indi</strong><small>Frozen Food & Jamu Rumahan</small></span>
-      </a>
-      <nav class="desktop-nav" aria-label="Navigasi utama">
-        <a class="nav-link active" href="#beranda">Beranda</a>
-        <a class="nav-link" href="#menu">Menu</a>
-        <a class="nav-link" href="#paket">Paket</a>
-        <a class="nav-link" href="#cerita">Tentang Kami</a>
-        <a class="nav-link" href="#kontak">Kontak</a>
-      </nav>
-      <button class="header-order" id="headerCart" type="button" aria-label="Buka keranjang">
-        <span aria-hidden="true">🛍</span> Keranjang <span class="cart-number" data-cart-count>0</span>
-      </button>
-    </div>
-  </header>
 
-  <main>
-    <section class="hero-section" id="beranda" aria-labelledby="hero-title">
-      <div class="container">
-        <div class="hero">
-          <div class="hero-copy">
-            <div class="hero-eyebrow"><span class="eyebrow-dot"></span> Enak dinikmati, gampang disiapkan</div>
-            <h1 id="hero-title">Stok camilan enak,<br><em>hari jadi lebih seru!</em></h1>
-            <p>Dari cireng legendaris sampai lauk frozen praktis dan jamu rumahan. Semua favoritmu sekarang lebih gampang dipesan.</p>
-            <div class="hero-actions">
-              <a class="btn btn-yellow" href="#menu">Jelajahi Menu <span aria-hidden="true">↗</span></a>
-              <a class="btn btn-outline-light" href="https://wa.me/6282254710903?text=Halo%20Cireng%20Indi%2C%20saya%20ingin%20bertanya%20tentang%20produk." target="_blank" rel="noopener noreferrer">Chat WhatsApp</a>
+    <!-- =========================
+         APP
+    ========================== -->
+    <div class="app">
+
+        <!-- =========================
+             HEADER / BRAND
+        ========================== -->
+        <header class="brand-header">
+
+            <div class="brand-logo">
+                <img
+                    src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/logo_cireng_indi.png"
+                    alt="Logo Cireng Indi"
+                >
             </div>
-            <div class="hero-proof"><span class="proof-icon">✓</span> Frozen food & jamu rumahan <span class="proof-bullet">·</span> Tanah Grogot</div>
-          </div>
-          <div class="hero-visual" aria-hidden="true">
-            <span class="hero-doodle doodle-one">✳</span>
-            <span class="hero-doodle doodle-two">✦</span>
-            <div class="hero-food-frame">
-              <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_01.webp" alt="" width="500" height="500" fetchpriority="high">
+
+            <div class="brand-text">
+                <h1>Cireng Indi</h1>
+                <p>Frozen Food &amp; Jamu Rumahan</p>
             </div>
-            <div class="hero-sticker sticker-top">100%<small>momen ngemil</small></div>
-            <div class="hero-sticker sticker-bottom"><span>♡</span> Pilihan favorit</div>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <section class="quick-badges" aria-label="Keunggulan">
-      <div class="container quick-grid">
-        <div><span class="quick-icon">✦</span><p><strong>Sejak 2015</strong><small>Berawal dari cireng</small></p></div>
-        <div><span class="quick-icon">❄</span><p><strong>Siap Stok di Rumah</strong><small>Frozen food praktis</small></p></div>
-        <div><span class="quick-icon">☕</span><p><strong>Jamu Rumahan</strong><small>Pilihan minuman tradisional</small></p></div>
-        <div><span class="quick-icon">❤</span><p><strong>Pesan dengan Mudah</strong><small>Langsung melalui WhatsApp</small></p></div>
-      </div>
-    </section>
+        </header>
 
-    <section class="section menu-section" id="menu" aria-labelledby="menu-title">
-      <div class="container">
-        <div class="section-heading">
-          <div><span class="kicker">PILIH FAVORITMU</span><h2 id="menu-title">Menu Cireng Indi <span class="accent-star">✳</span></h2><p>Mau yang gurih, praktis, atau segar? Semuanya ada di sini.</p></div>
-          <span class="heading-count"><strong>31</strong> pilihan produk</span>
-        </div>
-        <div class="catalog-tools">
-          <label class="search-field"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Cari menu favoritmu..." autocomplete="off" aria-label="Cari produk"></label>
-          <div class="category-filters" id="categoryFilters" aria-label="Filter kategori produk">
-            <button type="button" class="category-chip selected" data-category="semua" aria-pressed="true">Semua Menu</button>
-            <button type="button" class="category-chip" data-category="cireng" aria-pressed="false">Cireng & Jajanan</button>
-            <button type="button" class="category-chip" data-category="frozen" aria-pressed="false">Lauk Frozen</button>
-            <button type="button" class="category-chip" data-category="camilan" aria-pressed="false">Camilan</button>
-            <button type="button" class="category-chip" data-category="jamu" aria-pressed="false">Jamu</button>
-            <button type="button" class="category-chip" data-category="dessert" aria-pressed="false">Dessert</button>
-          </div>
-        </div>
-        <div class="catalog-summary"><span id="catalogSummary" aria-live="polite">Menampilkan 31 menu</span><span>Harga dapat berubah • konfirmasi saat pesan</span></div>
-        <div class="product-grid" id="productGrid" aria-live="polite"></div>
-        <div class="empty-state" id="emptyState" hidden><span>⌕</span><h3>Menu belum ditemukan</h3><p>Coba kata kunci atau kategori yang lain, ya.</p><button id="resetFilters" class="btn btn-red" type="button">Lihat Semua Menu</button></div>
-      </div>
-    </section>
 
-    <section class="section packages-section" id="paket" aria-labelledby="paket-title">
-      <div class="container">
-        <div class="section-heading"><div><span class="kicker">UNTUK KEBUTUHANMU</span><h2 id="paket-title">Ada acara? <span class="red-text">Bisa banget.</span></h2><p>Untuk kebutuhan pribadi, bisnis, sampai acara spesial.</p></div></div>
-        <div class="package-grid">
-          <article class="package-card cafe-package">
-            <div class="package-icon">☕</div><span class="package-badge">UNTUK BISNIS</span><h3>Paket Cafe & Reseller</h3>
-            <p>Butuh stok untuk cafe, kantin, atau jualan lagi? Jumlah dan pilihan produk bisa didiskusikan sesuai kebutuhan.</p>
-            <a href="https://wa.me/6282254710903?text=Halo%20Cireng%20Indi%2C%20saya%20ingin%20menanyakan%20Paket%20Cafe%20dan%20Reseller." target="_blank" rel="noopener noreferrer">Tanya Paket Cafe <span aria-hidden="true">↗</span></a>
-          </article>
-          <article class="package-card event-package">
-            <div class="package-icon">✷</div><span class="package-badge">UNTUK ACARA</span><h3>Paket Event</h3>
-            <p>Mau pesan untuk arisan, ulang tahun, pernikahan, atau gathering? Ceritakan kebutuhan dan jumlah pesananmu.</p>
-            <a href="https://wa.me/6282254710903?text=Halo%20Cireng%20Indi%2C%20saya%20ingin%20menanyakan%20Paket%20Event." target="_blank" rel="noopener noreferrer">Tanya Paket Event <span aria-hidden="true">↗</span></a>
-          </article>
-        </div>
-      </div>
-    </section>
+        <!-- =========================
+             MAIN CONTENT
+        ========================== -->
+        <main class="slides-container">
 
-    <section class="section about-section" id="cerita" aria-labelledby="about-title">
-      <div class="container about-grid">
-        <div class="about-image">
-          <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_02.webp" alt="Cireng Isi dari katalog Cireng Indi" width="550" height="550" loading="lazy" decoding="async">
-          <span class="about-caption">Rasa rumahan, dari dulu sampai sekarang.</span>
-        </div>
-        <div class="about-copy">
-          <span class="kicker">KENALAN DULU, YUK</span>
-          <h2 id="about-title">Berawal dari cireng.<br><span class="red-text">Terus berkembang.</span></h2>
-          <p>Cireng Indi hadir sejak 2015 dengan satu tujuan sederhana: menghadirkan cireng dengan bahan berkualitas.</p>
-          <p>Seiring waktu, pilihan produknya berkembang menjadi berbagai lauk frozen, camilan, dan jamu rumahan untuk teman aktivitas sehari-hari.</p>
-          <div class="about-quote">“Kami percaya makanan rumahan yang dibuat dengan hati akan memiliki tempat di hati pelanggan.”</div>
-          <a href="#kontak" class="text-link">Kenali & hubungi kami <span aria-hidden="true">↗</span></a>
-        </div>
-      </div>
-    </section>
 
-    <section class="section contact-section" id="kontak" aria-labelledby="contact-title">
-      <div class="container contact-grid">
-        <div class="contact-copy">
-          <span class="kicker">YUK, MAMPIR!</span><h2 id="contact-title">Dekat di hati,<br><span class="red-text">gampang dihubungi.</span></h2>
-          <p>Mau tanya stok, varian, atau pesanan jumlah banyak? Langsung hubungi kami.</p>
-          <div class="contact-list">
-            <div><span class="contact-icon">⌖</span><p><strong>Alamat</strong><span>Jl. Khaliluddin, Gg. Nusa Indah 4, Tanah Grogot, Kalimantan Timur</span><small>Rujukan lain: Jl. Piere Tendean / Pabrik Piring, Gg. Sepakat Nusa Indah 4</small></p></div>
-            <div><span class="contact-icon">◷</span><p><strong>Jam operasional tertera</strong><span>Setiap hari, 10.00–19.30 WITA</span><small>Konfirmasi jika berkunjung di hari libur.</small></p></div>
-            <div><span class="contact-icon">✆</span><p><strong>WhatsApp</strong><a href="https://wa.me/6282254710903" target="_blank" rel="noopener noreferrer">0822-5471-0903</a><a href="https://wa.me/6281346264433" target="_blank" rel="noopener noreferrer">0813-4626-4433</a></p></div>
-          </div>
-          <div class="contact-actions"><a class="btn btn-red" href="https://wa.me/6282254710903" target="_blank" rel="noopener noreferrer">Chat Sekarang ↗</a><a class="btn btn-white" href="https://maps.app.goo.gl/2qNE6KGMzMpn4ZcU8" target="_blank" rel="noopener noreferrer">Buka Google Maps ↗</a></div>
-        </div>
-        <div class="contact-poster">
-          <div class="poster-stars">✦ ✷ ✦</div>
-          <span class="poster-label">CIRENG INDI</span>
-          <h3>Yang enak-enak,<br>nggak perlu jauh.</h3>
-          <div class="poster-image"><img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_12.webp" alt="Katalog Cireng Indi" width="420" height="420" loading="lazy" decoding="async"></div>
-          <a href="https://www.instagram.com/indi_fanova_ownercireng/" target="_blank" rel="noopener noreferrer">Lihat Instagram kami @indi_fanova_ownercireng ↗</a>
-        </div>
-      </div>
-    </section>
-  </main>
+            <!-- =========================
+                 SLIDE 1
+                 TENTANG KAMI
+            ========================== -->
+            <section
+                class="slide active"
+                id="tentang"
+            >
 
-  <footer class="site-footer">
-    <div class="container footer-main">
-      <div class="footer-brand"><strong>Cireng Indi <span>✳</span></strong><p>Frozen food & jamu rumahan sejak 2015. Dibuat untuk momen ngemil dan makan yang lebih praktis.</p></div>
-      <div class="footer-links"><strong>Jelajahi</strong><a href="#menu">Katalog Produk</a><a href="#paket">Paket Cafe & Event</a><a href="#cerita">Cerita Kami</a><a href="#kontak">Kontak</a></div>
-      <div class="footer-links"><strong>Hubungi Kami</strong><a href="https://wa.me/6282254710903" target="_blank" rel="noopener noreferrer">WhatsApp Utama ↗</a><a href="https://www.instagram.com/indi_fanova_ownercireng/" target="_blank" rel="noopener noreferrer">Instagram ↗</a><a href="https://maps.app.goo.gl/2qNE6KGMzMpn4ZcU8" target="_blank" rel="noopener noreferrer">Google Maps ↗</a></div>
+                <div class="slide-header">
+                    <span class="slide-label">TENTANG KAMI</span>
+                    <h2>Cireng Indi</h2>
+                    <p>Frozen Homemade</p>
+                </div>
+
+
+                <div class="about-card">
+
+                    <h3>TENTANG KAMI</h3>
+
+                    <p>
+                        Cireng Indi hadir sejak 2015 dengan satu tujuan sederhana:
+                        menghadirkan cireng dengan bahan berkualitas.
+                    </p>
+
+                    <p>
+                        Seiring berjalannya waktu, Cireng Indi terus berinovasi.
+                        Tidak hanya cireng, kami juga mengembangkan berbagai
+                        produk frozen lauk seperti Chicken Katsu, Nugget,
+                        Sempol Ayam, Bola Ayam Keju dan berbagai produk lainnya.
+                    </p>
+
+                    <p class="about-quote">
+                        "Kami percaya makanan rumahan yang dibuat dengan hati
+                        akan memiliki tempat di hati pelanggan."
+                    </p>
+
+                </div>
+
+
+                <!-- CONTACT INFO -->
+                <div class="info-card">
+
+                    <div class="info-icon whatsapp-icon">
+                        WA
+                    </div>
+
+                    <div class="info-content">
+                        <strong>WhatsApp</strong>
+
+                        <a href="https://wa.me/6282254710903">
+                            0822-5471-0903
+                        </a>
+
+                        <a href="https://wa.me/6281346264433">
+                            0813-4626-4433
+                        </a>
+                    </div>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <div class="info-icon location-icon">
+                        ●
+                    </div>
+
+                    <div class="info-content">
+
+                        <strong>Alamat</strong>
+
+                        <p>
+                            Jl. Khaliluddin, Gg. Nusa Indah 4
+                        </p>
+
+                        <p>
+                            Jl. Piere Tendean / Pabrik Piring,
+                            Gg. Sepakat Nusa Indah 4
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- GOOGLE MAPS -->
+                <a
+                    class="maps-card"
+                    href="https://maps.app.goo.gl/2qNE6KGMzMpn4ZcU8"
+                    target="_blank"
+                    rel="noopener"
+                >
+
+                    <div class="maps-placeholder">
+
+                        <span class="maps-pin">●</span>
+
+                        <div>
+                            <strong>Lokasi Kami</strong>
+                            <p>Lihat lokasi di Google Maps</p>
+                        </div>
+
+                    </div>
+
+                    <span class="maps-button">
+                        Lihat di Google Maps
+                    </span>
+
+                </a>
+
+            </section>
+
+
+
+            <!-- =========================
+                 SLIDE 2
+                 CIRENG
+            ========================== -->
+            <section
+                class="slide"
+                id="cireng"
+            >
+
+                <div class="section-title">
+                    <span>‹</span>
+                    <h2>CIRENG</h2>
+                    <span>›</span>
+                </div>
+
+
+                <div class="product-grid">
+
+
+                    <!-- CIRENG ORIGINAL -->
+                    <article class="product-card">
+
+                        <div class="product-image">
+                            <img
+                                src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_01.webp" loading="lazy" decoding="async"
+                                alt="Cireng Original"
+                            >
+                        </div>
+
+                        <div class="product-content">
+
+                            <h3>Cireng Original</h3>
+
+                            <select
+                                class="product-option"
+                                data-product="Cireng Original"
+                            >
+                                <option value="250 gram - Rp25.000">
+                                    250 gram
+                                </option>
+
+                                <option value="520 gram - Rp30.000">
+                                    520 gram
+                                </option>
+
+                                <option value="1 kg - Rp55.000">
+                                    1 kg
+                                </option>
+                            </select>
+
+                            <strong class="price">
+                                Rp25.000
+                            </strong>
+
+                            <button
+                                class="order-btn"
+                                type="button"
+                            >
+                                PESAN
+                            </button>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- CIRENG ISI -->
+                    <article class="product-card">
+
+                        <div class="product-image">
+                            <img
+                                src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_02.webp" loading="lazy" decoding="async"
+                                alt="Cireng Isi"
+                            >
+                        </div>
+
+                        <div class="product-content">
+
+                            <h3>Cireng Isi</h3>
+
+                            <select
+                                class="product-option"
+                                data-product="Cireng Isi"
+                            >
+                                <option value="Original - 6 pcs - Rp25.000">
+                                    Original
+                                </option>
+
+                                <option value="Ayam Pedas - 6 pcs - Rp25.000">
+                                    Ayam Pedas
+                                </option>
+                            </select>
+
+                            <strong class="price">
+                                Rp25.000
+                            </strong>
+
+                            <button
+                                class="order-btn"
+                                type="button"
+                            >
+                                PESAN
+                            </button>
+
+                        </div>
+
+                    </article>
+
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =========================
+                 SLIDE 3
+                 NUGGET & JAMU
+            ========================== -->
+            <section
+                class="slide"
+                id="nugget-jamu"
+            >
+
+                <div class="section-title">
+                    <span>‹</span>
+                    <h2>NUGGET &amp; JAMU</h2>
+                    <span>›</span>
+                </div>
+
+
+                <h3 class="category-title">
+                    NUGGET &amp; KATSU
+                </h3>
+
+
+                <div class="product-grid">
+
+
+                    <!-- CHICKEN KATSU -->
+                    <article class="product-card">
+
+                        <div class="product-image">
+                            <img
+                                src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_07.webp" loading="lazy" decoding="async"
+                                alt="Chicken Katsu"
+                            >
+                        </div>
+
+                        <div class="product-content">
+
+                            <h3>Chicken Katsu</h3>
+
+                            <select
+                                class="product-option"
+                                data-product="Chicken Katsu"
+                            >
+                                <option value="250 gram - Rp28.000">
+                                    250 gram
+                                </option>
+
+                                <option value="500 gram - Rp55.000">
+                                    500 gram
+                                </option>
+
+                                <option value="1 kg - Rp110.000">
+                                    1 kg
+                                </option>
+                            </select>
+
+                            <strong class="price">
+                                Rp28.000
+                            </strong>
+
+                            <button
+                                class="order-btn"
+                                type="button"
+                            >
+                                PESAN
+                            </button>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- NUGGET AYAM -->
+                    <article class="product-card">
+
+                        <div class="product-image">
+                            <img
+                                src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_08.webp" loading="lazy" decoding="async"
+                                alt="Nugget Ayam"
+                            >
+                        </div>
+
+                        <div class="product-content">
+
+                            <h3>Nugget Ayam</h3>
+
+                            <select
+                                class="product-option"
+                                data-product="Nugget Ayam"
+                            >
+                                <option value="250 gram - Rp30.000">
+                                    250 gram
+                                </option>
+
+                                <option value="500 gram - Rp60.000">
+                                    500 gram
+                                </option>
+
+                                <option value="1 kg - Rp120.000">
+                                    1 kg
+                                </option>
+                            </select>
+
+                            <strong class="price">
+                                Rp30.000
+                            </strong>
+
+                            <button
+                                class="order-btn"
+                                type="button"
+                            >
+                                PESAN
+                            </button>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+
+                <h3 class="category-title">
+                    JAMU
+                </h3>
+
+
+                <div class="product-grid jamu-grid">
+
+
+                    <article class="product-card small-product">
+                        <div class="product-image">
+                            <img
+                                src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_23.webp" loading="lazy" decoding="async"
+                                alt="Jamu Manjakani"
+                            >
+                        </div>
+
+                        <div class="product-content">
+                            <h3>Manjakani</h3>
+                            <strong class="price">Rp28.000</strong>
+
+                            <button class="order-btn" type="button">
+                                PESAN
+                            </button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card small-product">
+                        <div class="product-image">
+                            <img
+                                src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_24.webp" loading="lazy" decoding="async"
+                                alt="Jamu Komplit"
+                            >
+                        </div>
+
+                        <div class="product-content">
+                            <h3>Komplit</h3>
+                            <strong class="price">Rp28.000</strong>
+
+                            <button class="order-btn" type="button">
+                                PESAN
+                            </button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card small-product">
+                        <div class="product-image">
+                            <img
+                                src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_25.webp" loading="lazy" decoding="async"
+                                alt="Kunyit Asam"
+                            >
+                        </div>
+
+                        <div class="product-content">
+                            <h3>Kunyit Asam</h3>
+                            <strong class="price">Rp28.000</strong>
+
+                            <button class="order-btn" type="button">
+                                PESAN
+                            </button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card small-product">
+                        <div class="product-image">
+                            <img
+                                src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_26.webp" loading="lazy" decoding="async"
+                                alt="Jahe Latte"
+                            >
+                        </div>
+
+                        <div class="product-content">
+                            <h3>Jahe Latte</h3>
+                            <strong class="price">Rp30.000</strong>
+
+                            <button class="order-btn" type="button">
+                                PESAN
+                            </button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card small-product">
+                        <div class="product-image">
+                            <img
+                                src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_27.webp" loading="lazy" decoding="async"
+                                alt="Jahe Original"
+                            >
+                        </div>
+
+                        <div class="product-content">
+                            <h3>Jahe Original</h3>
+                            <strong class="price">Rp28.000</strong>
+
+                            <button class="order-btn" type="button">
+                                PESAN
+                            </button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card small-product">
+                        <div class="product-image">
+                            <img
+                                src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_28.webp" loading="lazy" decoding="async"
+                                alt="Sari Kacang Hijau"
+                            >
+                        </div>
+
+                        <div class="product-content">
+                            <h3>Sari Kacang Hijau</h3>
+                            <strong class="price">Rp28.000</strong>
+
+                            <button class="order-btn" type="button">
+                                PESAN
+                            </button>
+                        </div>
+                    </article>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =========================
+                 SLIDE 4
+                 MENU LAINNYA
+            ========================== -->
+            <section
+                class="slide"
+                id="lainnya"
+            >
+
+                <div class="section-title">
+                    <span>‹</span>
+                    <h2>MENU LAINNYA</h2>
+                    <span>›</span>
+                </div>
+
+
+                <div class="product-grid">
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_04.webp" loading="lazy" decoding="async" alt="Sempol Ayam">
+                        </div>
+                        <div class="product-content">
+                            <h3>Sempol Ayam</h3>
+                            <p>Isi 30 / Isi 45</p>
+                            <strong class="price">Mulai Rp40.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_05.webp" loading="lazy" decoding="async" alt="Tahu Bakso">
+                        </div>
+                        <div class="product-content">
+                            <h3>Tahu Bakso</h3>
+                            <p>Isi 10</p>
+                            <strong class="price">Rp35.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_06.webp" loading="lazy" decoding="async" alt="Pempek Ikan Tenggiri">
+                        </div>
+                        <div class="product-content">
+                            <h3>Pempek Ikan Tenggiri</h3>
+                            <p>Box / 500 gram / 1 kg</p>
+                            <strong class="price">Mulai Rp25.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_03.webp" loading="lazy" decoding="async" alt="Cilok">
+                        </div>
+                        <div class="product-content">
+                            <h3>Cilok</h3>
+                            <p>520 gram / 1 kg</p>
+                            <strong class="price">Mulai Rp30.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_09.webp" loading="lazy" decoding="async" alt="Bola Ayam Keju">
+                        </div>
+                        <div class="product-content">
+                            <h3>Bola Ayam Keju</h3>
+                            <p>1 box isi 10</p>
+                            <strong class="price">Rp40.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_10.webp" loading="lazy" decoding="async" alt="Bitterballen">
+                        </div>
+                        <div class="product-content">
+                            <h3>Bitterballen</h3>
+                            <p>1 box isi 10</p>
+                            <strong class="price">Rp40.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_11.webp" loading="lazy" decoding="async" alt="Bakso Ayam">
+                        </div>
+                        <div class="product-content">
+                            <h3>Bakso Ayam</h3>
+                            <p>Isi 25 / Isi 50</p>
+                            <strong class="price">Mulai Rp28.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_12.webp" loading="lazy" decoding="async" alt="Ebi Furai">
+                        </div>
+                        <div class="product-content">
+                            <h3>Ebi Furai</h3>
+                            <p>1 box</p>
+                            <strong class="price">Rp40.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_13.webp" loading="lazy" decoding="async" alt="Baceman Frozen">
+                        </div>
+                        <div class="product-content">
+                            <h3>Baceman Frozen</h3>
+                            <p>1 box</p>
+                            <strong class="price">Rp35.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_14.webp" loading="lazy" decoding="async" alt="Ayam Ungkep">
+                        </div>
+                        <div class="product-content">
+                            <h3>Ayam Ungkep</h3>
+                            <p>Isi 5</p>
+                            <strong class="price">Rp60.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_15.webp" loading="lazy" decoding="async" alt="Dimsum Crispy">
+                        </div>
+                        <div class="product-content">
+                            <h3>Dimsum Crispy</h3>
+                            <p>1 box</p>
+                            <strong class="price">Rp40.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_16.webp" loading="lazy" decoding="async" alt="Rollade Ayam">
+                        </div>
+                        <div class="product-content">
+                            <h3>Rollade Ayam</h3>
+                            <p>1 box</p>
+                            <strong class="price">Rp35.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_17.webp" loading="lazy" decoding="async" alt="Kebab Pisang">
+                        </div>
+                        <div class="product-content">
+                            <h3>Kebab Pisang</h3>
+                            <p>1 box</p>
+                            <strong class="price">Rp35.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_18.webp" loading="lazy" decoding="async" alt="Kebab Daging">
+                        </div>
+                        <div class="product-content">
+                            <h3>Kebab Daging</h3>
+                            <p>1 box</p>
+                            <strong class="price">Rp45.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_19.webp" loading="lazy" decoding="async" alt="Corndog">
+                        </div>
+                        <div class="product-content">
+                            <h3>Corndog</h3>
+                            <p>1 box</p>
+                            <strong class="price">Rp30.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_20.webp" loading="lazy" decoding="async" alt="Churros">
+                        </div>
+                        <div class="product-content">
+                            <h3>Churros</h3>
+                            <p>1 box</p>
+                            <strong class="price">Rp30.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_21.webp" loading="lazy" decoding="async" alt="Kentang Goreng">
+                        </div>
+                        <div class="product-content">
+                            <h3>Kentang Goreng</h3>
+                            <p>1 box</p>
+                            <strong class="price">Rp25.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_22.webp" loading="lazy" decoding="async" alt="Frozen Mix Platter">
+                        </div>
+                        <div class="product-content">
+                            <h3>Frozen Mix Platter</h3>
+                            <strong class="price">Rp75.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_29.webp" loading="lazy" decoding="async" alt="Puding Mix">
+                        </div>
+                        <div class="product-content">
+                            <h3>Puding Mix</h3>
+                            <strong class="price">Rp20.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_30.webp" loading="lazy" decoding="async" alt="Salad Jelly">
+                        </div>
+                        <div class="product-content">
+                            <h3>Salad Jelly</h3>
+                            <strong class="price">Rp15.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_31.webp" loading="lazy" decoding="async" alt="Rengginang">
+                        </div>
+                        <div class="product-content">
+                            <h3>Rengginang</h3>
+                            <strong class="price">Rp35.000</strong>
+                            <button class="order-btn" type="button">PESAN</button>
+                        </div>
+                    </article>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =========================
+                 SLIDE 5
+                 PAKET
+            ========================== -->
+            <section
+                class="slide"
+                id="paket"
+            >
+
+                <div class="section-title">
+                    <span>‹</span>
+                    <h2>PAKET</h2>
+                    <span>›</span>
+                </div>
+
+
+                <article class="package-card">
+
+                    <div class="package-content">
+
+                        <span class="package-label">
+                            UNTUK CAFE
+                        </span>
+
+                        <h3>Paket Cafe</h3>
+
+                        <p>
+                            Pesanan jumlah besar untuk kebutuhan cafe,
+                            kantin, usaha kuliner dan reseller.
+                        </p>
+
+                        <p>
+                            Paket dapat disesuaikan dengan kebutuhan
+                            dan jumlah pesanan.
+                        </p>
+
+                        <a
+                            class="package-btn"
+                            href="https://wa.me/6282254710903?text=Halo%20Cireng%20Indi%2C%20saya%20ingin%20menanyakan%20paket%20untuk%20Cafe."
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            HUBUNGI KAMI
+                        </a>
+
+                    </div>
+
+                </article>
+
+
+                <article class="package-card">
+
+                    <div class="package-content">
+
+                        <span class="package-label">
+                            EVENT &amp; ACARA
+                        </span>
+
+                        <h3>Paket Event</h3>
+
+                        <p>
+                            Menerima pesanan untuk berbagai acara
+                            seperti pernikahan, birthday, arisan,
+                            gathering dan acara lainnya.
+                        </p>
+
+                        <p>
+                            Untuk jumlah besar dan kebutuhan khusus,
+                            silakan hubungi kami.
+                        </p>
+
+                        <a
+                            class="package-btn"
+                            href="https://wa.me/6282254710903?text=Halo%20Cireng%20Indi%2C%20saya%20ingin%20menanyakan%20paket%20untuk%20Event."
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            HUBUNGI KAMI
+                        </a>
+
+                    </div>
+
+                </article>
+
+            </section>
+
+
+
+            <!-- =========================
+                 SLIDE 6
+                 KONTAK
+            ========================== -->
+            <section
+                class="slide"
+                id="kontak"
+            >
+
+                <div class="section-title">
+                    <span>‹</span>
+                    <h2>KONTAK KAMI</h2>
+                    <span>›</span>
+                </div>
+
+
+                <div class="contact-card">
+
+                    <div class="contact-row">
+
+                        <div class="contact-icon whatsapp">
+                            WA
+                        </div>
+
+                        <div>
+                            <strong>WhatsApp</strong>
+
+                            <a href="https://wa.me/6282254710903">
+                                0822-5471-0903
+                            </a>
+
+                            <a href="https://wa.me/6281346264433">
+                                0813-4626-4433
+                            </a>
+                        </div>
+
+                    </div>
+
+
+                    <div class="contact-row">
+
+                        <div class="contact-icon instagram">
+                            IG
+                        </div>
+
+                        <div>
+
+                            <strong>Instagram</strong>
+
+                            <a
+                                href="https://www.instagram.com/indi_fanova_ownercireng/"
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                @indi_fanova_ownercireng
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="contact-card">
+
+                    <div class="contact-row">
+
+                        <div class="contact-icon clock">
+                            ◷
+                        </div>
+
+                        <div>
+
+                            <strong>Jam Buka</strong>
+
+                            <p>
+                                Setiap Hari
+                            </p>
+
+                            <p>
+                                10.00 - 19.30
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="contact-card">
+
+                    <div class="contact-row">
+
+                        <div class="contact-icon location">
+                            ●
+                        </div>
+
+                        <div>
+
+                            <strong>Alamat</strong>
+
+                            <p>
+                                Jl. Khaliluddin, Gg. Nusa Indah 4
+                            </p>
+
+                            <p>
+                                Jl. Piere Tendean / Pabrik Piring,
+                                Gg. Sepakat Nusa Indah 4
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <a
+                    class="maps-card contact-map"
+                    href="https://maps.app.goo.gl/2qNE6KGMzMpn4ZcU8"
+                    target="_blank"
+                    rel="noopener"
+                >
+
+                    <div class="maps-placeholder">
+
+                        <span class="maps-pin">●</span>
+
+                        <div>
+                            <strong>Lokasi Kami</strong>
+                            <p>
+                                Buka lokasi di Google Maps
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <span class="maps-button">
+                        Lihat di Google Maps
+                    </span>
+
+                </a>
+
+            </section>
+
+        </main>
+
+
+
+        <!-- =========================
+             BOTTOM NAVIGATION
+        ========================== -->
+        <nav class="bottom-nav">
+
+            <button
+                class="nav-item active"
+                data-slide="tentang"
+                type="button"
+            >
+                <span class="nav-icon">⌂</span>
+                <span>Tentang</span>
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-slide="cireng"
+                type="button"
+            >
+                <span class="nav-icon">◉</span>
+                <span>Cireng</span>
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-slide="nugget-jamu"
+                type="button"
+            >
+                <span class="nav-icon">▦</span>
+                <span>Nugget &amp; Jamu</span>
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-slide="lainnya"
+                type="button"
+            >
+                <span class="nav-icon">⊞</span>
+                <span>Menu Lainnya</span>
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-slide="paket"
+                type="button"
+            >
+                <span class="nav-icon">◇</span>
+                <span>Paket</span>
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-slide="kontak"
+                type="button"
+            >
+                <span class="nav-icon">☎</span>
+                <span>Kontak</span>
+            </button>
+
+        </nav>
+
     </div>
-    <div class="container footer-bottom"><span>© <span id="year">2026</span> Cireng Indi. Semua hak dilindungi.</span><span>Tanah Grogot • Kalimantan Timur</span></div>
-  </footer>
 
-  <nav class="mobile-nav" aria-label="Navigasi seluler">
-    <a href="#beranda" class="mobile-nav-item active"><span aria-hidden="true">⌂</span>Beranda</a>
-    <a href="#menu" class="mobile-nav-item"><span aria-hidden="true">▦</span>Menu</a>
-    <a href="#paket" class="mobile-nav-item"><span aria-hidden="true">✷</span>Paket</a>
-    <button id="mobileCart" class="mobile-nav-item" type="button"><span aria-hidden="true">🛍</span>Keranjang <i data-cart-count>0</i></button>
-  </nav>
-  <button class="floating-cart" id="floatingCart" type="button" hidden aria-label="Lihat keranjang"><span>🛍</span><strong><span data-cart-count>0</span> item di keranjang</strong><span id="floatingTotal">Rp0</span><span aria-hidden="true">↗</span></button>
 
-  <div id="cartOverlay" class="cart-overlay" hidden></div>
-  <aside id="cartDrawer" class="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cartTitle" aria-hidden="true" tabindex="-1">
-    <div class="drawer-head"><div><span class="kicker">PESANANMU</span><h2 id="cartTitle">Keranjang Belanja</h2></div><button type="button" class="close-drawer" id="closeCart" aria-label="Tutup keranjang">×</button></div>
-    <div class="drawer-items" id="cartItems"></div>
-    <div class="drawer-footer">
-      <label for="buyerNote">Catatan tambahan (opsional)</label><textarea id="buyerNote" rows="2" placeholder="Misalnya: detail varian atau waktu pengambilan"></textarea>
-      <div class="cart-total-line"><span>Perkiraan subtotal</span><strong id="drawerTotal">Rp0</strong></div>
-      <p>Harga dan stok akan dikonfirmasi oleh Cireng Indi. Ongkir belum termasuk.</p>
-      <button type="button" class="btn btn-red checkout-button" id="checkoutButton">Pesan via WhatsApp <span aria-hidden="true">↗</span></button>
-    </div>
-  </aside>
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <!-- JAVASCRIPT -->
+    <script src="script.js" defer></script>
+
 </body>
 </html>
