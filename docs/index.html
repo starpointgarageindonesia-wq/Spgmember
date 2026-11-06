@@ -11,7 +11,7 @@
         content="Cireng Indi - Frozen Food & Jamu Rumahan sejak 2015."
     >
 
-    <link rel="stylesheet" href="style.css?v=legacy20261106f">
+    <link rel="stylesheet" href="style.css?v=20261106slider">
 <link rel="icon" href="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/logo_cireng_indi.png" type="image/png">
 <meta name="theme-color" content="#a50909">
 </head>
@@ -57,6 +57,79 @@
                 class="slide active"
                 id="tentang"
             >
+
+                <!-- Header slider, memakai empat banner resmi dari aplikasi Cireng Indi -->
+                <div class="ci-home-banner" id="ciHomeCarousel"
+                     role="region" aria-label="Galeri banner produk Cireng Indi" aria-roledescription="carousel"
+                     tabindex="0">
+                    <div class="ci-home-banner-track">
+                        <div class="ci-home-banner-slide is-active"
+                             data-ci-slide="0" aria-hidden="false">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_banner_01.webp"
+                                 alt="Banner asli Cireng Indi dengan cireng original dan kemasan produk" width="1200" height="620"
+                                 fetchpriority="high" loading="eager" decoding="async">
+                            <div class="ci-home-banner-copy">
+                                <span class="ci-home-banner-kicker">CIRENG INDI • SEJAK 2015</span>
+                                <h3>Cireng favorit<br><em>keluarga.</em></h3>
+                                <p>Siap jadi teman ngemil kapan saja.</p>
+                                <button type="button" class="ci-home-banner-link" data-ci-open="cireng" >Lihat Cireng<span aria-hidden="true">↗</span></button>
+                            </div>
+                        </div>
+                        <div class="ci-home-banner-slide"
+                             data-ci-slide="1" aria-hidden="true">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_banner_02.webp"
+                                 alt="Banner asli produk frozen Cireng Indi dengan makanan berlapis tepung dalam kemasan" width="1200" height="620"
+                                 loading="lazy" decoding="async">
+                            <div class="ci-home-banner-copy">
+                                <span class="ci-home-banner-kicker">ANEKA FROZEN FOOD</span>
+                                <h3>Stok di rumah,<br><em>tinggal masak.</em></h3>
+                                <p>Praktis untuk menu harian.</p>
+                                <button type="button" class="ci-home-banner-link" data-ci-open="nugget-jamu" tabindex="-1">Lihat Frozen<span aria-hidden="true">↗</span></button>
+                            </div>
+                        </div>
+                        <div class="ci-home-banner-slide"
+                             data-ci-slide="2" aria-hidden="true">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_banner_03.webp"
+                                 alt="Banner asli jamu rumahan Cireng Indi dalam gelas saji" width="1200" height="620"
+                                 loading="lazy" decoding="async">
+                            <div class="ci-home-banner-copy">
+                                <span class="ci-home-banner-kicker">JAMU RUMAHAN</span>
+                                <h3>Minuman tradisional,<br><em>selalu spesial.</em></h3>
+                                <p>Lengkapi pilihan favoritmu.</p>
+                                <button type="button" class="ci-home-banner-link" data-ci-open="nugget-jamu" tabindex="-1">Lihat Jamu<span aria-hidden="true">↗</span></button>
+                            </div>
+                        </div>
+                        <div class="ci-home-banner-slide"
+                             data-ci-slide="3" aria-hidden="true">
+                            <img src="https://raw.githubusercontent.com/rizkyhidayat8999-netizen/Cirengindiapp/main/apps/member/app/src/main/assets/assets/official_banner_04.webp"
+                                 alt="Banner asli Cireng Indi dengan aneka dessert dan puding dalam kemasan" width="1200" height="620"
+                                 loading="lazy" decoding="async">
+                            <div class="ci-home-banner-copy">
+                                <span class="ci-home-banner-kicker">DESSERT DAN CAMILAN</span>
+                                <h3>Ada yang manis<br><em>buat hari ini.</em></h3>
+                                <p>Coba juga menu pencuci mulut.</p>
+                                <button type="button" class="ci-home-banner-link" data-ci-open="lainnya" tabindex="-1">Lihat Menu<span aria-hidden="true">↗</span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="ci-home-banner-arrow ci-prev" type="button"
+                            aria-label="Banner sebelumnya" data-ci-dir="-1">‹</button>
+                    <button class="ci-home-banner-arrow ci-next" type="button"
+                            aria-label="Banner berikutnya" data-ci-dir="1">›</button>
+                    <div class="ci-home-banner-pagination" aria-label="Pilih banner">
+                        <button type="button" class="ci-home-banner-dot is-active"
+                            data-ci-goto="0" aria-label="Tampilkan banner 1 dari 4" aria-pressed="true"></button>
+                        <button type="button" class="ci-home-banner-dot"
+                            data-ci-goto="1" aria-label="Tampilkan banner 2 dari 4" aria-pressed="false"></button>
+                        <button type="button" class="ci-home-banner-dot"
+                            data-ci-goto="2" aria-label="Tampilkan banner 3 dari 4" aria-pressed="false"></button>
+                        <button type="button" class="ci-home-banner-dot"
+                            data-ci-goto="3" aria-label="Tampilkan banner 4 dari 4" aria-pressed="false"></button>
+                    </div>
+                    <span class="ci-home-banner-count" aria-live="off"><span data-ci-current>01</span> / 04</span>
+                </div>
+                <!-- Akhir header slider -->
+
 
                 <div class="slide-header">
                     <span class="slide-label">TENTANG KAMI</span>
@@ -1130,7 +1203,7 @@
 
 
     <!-- JAVASCRIPT -->
-    <script src="script.js?v=legacy20261106f"></script>
+    <script src="script.js?v=20261106slider"></script>
 
 </body>
 </html>
