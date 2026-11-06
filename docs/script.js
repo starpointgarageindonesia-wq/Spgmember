@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const slides = document.querySelectorAll(".slide");
 
     const navItems = document.querySelectorAll(
-        ".bottom-nav .nav-item, .desktop-navigation .nav-item"
+        ".bottom-nav .nav-item"
     );
 
     function showSlide(targetId) {
@@ -206,7 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    /* Preserve direct WhatsApp links and their original destinations. */
+    /* WhatsApp links retain the phone numbers in original HTML. */
 
     /* =====================================================
        INSTAGRAM
