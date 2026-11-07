@@ -2560,3 +2560,29 @@ body{
 .ci-page-paused .ci-catalog-photo img{
   animation-play-state:paused!important;
 }
+
+
+/* PRODUCT PRICE CLARITY & FOOD COPY POLISH */
+.ci-catalog-section .ci-catalog-body .ci-catalog-desc{
+  color:#574740;
+  line-height:1.66;
+  text-wrap:pretty;
+}
+.ci-catalog-price{
+  flex-wrap:wrap;
+}
+.ci-catalog-price strong{
+  font-variant-numeric:tabular-nums;
+}
+.ci-price-note{
+  margin:7px 0 0;
+  color:#81664b;
+  font-size:10px;
+  line-height:1.5;
+  border-left:2px solid #dcb66d;
+  padding-left:9px;
+}
+.ci-catalog-variant strong{font-variant-numeric:tabular-nums}
+@media(max-width:699px){
+ .ci-price-note{font-size:9.5px;line-height:1.45}
+}
