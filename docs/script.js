@@ -310,4 +310,54 @@ document.addEventListener("DOMContentLoaded", () => {
         setPhoto(0);
     }
 
+
+    /* CIRENG INDI REVEAL ON SCROLL
+       Adds gentle motion only when supported and desired.
+       Without JavaScript, or if reduced motion is requested, all content
+       remains visible and usable. */
+    const ciReduceMotion = Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches);
+    const ciSaveData = Boolean(navigator.connection?.saveData);
+    if (ciSaveData) document.body.classList.add("ci-save-data");
+
+    if (!ciReduceMotion && !ciSaveData && "IntersectionObserver" in window) {
+        const revealTargets = Array.from(document.querySelectorAll([
+            ".ci-catalog-heading",
+            ".ci-catalog-subheading",
+            ".ci-catalog-card",
+            ".ci-paket-heading",
+            ".ci-paket-card",
+            ".ci-home-overview",
+            ".ci-home-details",
+            "#kontak .contact-card",
+            "#kontak .maps-card"
+        ].join(",")));
+
+        if (revealTargets.length) {
+            const ciRevealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add("ci-inview");
+                    observer.unobserve(entry.target);
+                });
+            }, { threshold: 0.06, rootMargin: "0px 0px -5% 0px" });
+
+            revealTargets.forEach((el, index) => {
+                const delay = el.classList.contains("ci-catalog-card")
+                    ? (index % 4) * 58
+                    : el.classList.contains("ci-paket-card") ? (index % 2) * 95 : 0;
+                el.style.setProperty("--ci-reveal-delay", delay + "ms");
+                el.classList.add("ci-reveal");
+                ciRevealObserver.observe(el);
+            });
+            document.body.classList.add("ci-motion-enabled");
+        }
+    }
+
+    /* Pause ambient visual effects when the tab is not visible. */
+    const ciPauseMotion = () => {
+        document.body.classList.toggle("ci-page-paused", document.hidden);
+    };
+    document.addEventListener("visibilitychange", ciPauseMotion);
+    ciPauseMotion();
+
 });
