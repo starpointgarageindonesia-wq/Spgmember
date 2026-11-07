@@ -123,6 +123,96 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
+    /* CIRENG INDI PAGE SWIPE NAVIGATION
+       Swipe left/right between the five bottom tabs on touchscreens.
+       Vertical page scroll, the owner photo carousel, map and form controls
+       keep their existing interactions. No wraparound at either end. */
+    const ciSwipeArea = document.querySelector(".slides-container");
+
+    if (ciSwipeArea && navItems.length > 1) {
+        const tabOrder = Array.from(navItems)
+            .map(item => item.dataset.slide)
+            .filter(id => id && document.getElementById(id));
+
+        const ignoredSwipeTargets =
+            ".ci-story-carousel, .ci-visit-map, iframe, input, textarea, select, " +
+            "button, a, [contenteditable], [data-no-page-swipe], .ci-catalog-search";
+
+        let swipeStart = null;
+
+        ciSwipeArea.addEventListener("touchstart", event => {
+            swipeStart = null;
+            if (event.touches.length !== 1) return;
+
+            const target = event.target;
+            if (!(target instanceof Element) || target.closest(ignoredSwipeTargets)) return;
+
+            const point = event.touches[0];
+            // Avoid intercepting the browser's edge-swipe Back/Forward gesture.
+            const screenWidth = window.innerWidth || document.documentElement.clientWidth;
+            if (point.clientX < 22 || point.clientX > screenWidth - 22) return;
+
+            swipeStart = {
+                identifier: point.identifier,
+                x: point.clientX,
+                y: point.clientY,
+                time: Date.now()
+            };
+        }, { passive: true });
+
+        ciSwipeArea.addEventListener("touchmove", event => {
+            if (!swipeStart) return;
+            if (event.touches.length !== 1) {
+                swipeStart = null;
+                return;
+            }
+            const point = event.touches[0];
+            if (point.identifier !== swipeStart.identifier) {
+                swipeStart = null;
+                return;
+            }
+            const dx = point.clientX - swipeStart.x;
+            const dy = point.clientY - swipeStart.y;
+            // Never turn an ordinary vertical scroll into a menu change.
+            if (Math.abs(dy) > 18 && Math.abs(dy) > Math.abs(dx) * 1.1) {
+                swipeStart = null;
+            }
+        }, { passive: true });
+
+        ciSwipeArea.addEventListener("touchend", event => {
+            const start = swipeStart;
+            swipeStart = null;
+            if (!start) return;
+
+            const end = Array.from(event.changedTouches)
+                .find(point => point.identifier === start.identifier);
+            if (!end) return;
+
+            const dx = end.clientX - start.x;
+            const dy = end.clientY - start.y;
+            const minimumDistance = Math.max(60, Math.min(window.innerWidth * 0.09, 100));
+            if (Math.abs(dx) < minimumDistance ||
+                Math.abs(dx) < Math.abs(dy) * 1.4 ||
+                Date.now() - start.time > 1300) return;
+
+            const activeId = document.querySelector(".bottom-nav .nav-item.active")?.dataset.slide
+                || document.querySelector(".slides-container > .slide.active")?.id;
+            const current = tabOrder.indexOf(activeId);
+            if (current < 0) return;
+
+            const next = current + (dx < 0 ? 1 : -1);
+            if (next < 0 || next >= tabOrder.length) return;
+
+            const targetId = tabOrder[next];
+            showSlide("#" + targetId);
+            history.replaceState(null, "", "#" + targetId);
+        }, { passive: true });
+
+        ciSwipeArea.addEventListener("touchcancel", () => {
+            swipeStart = null;
+        }, { passive: true });
+    }
+
     /* Katalog produk menampilkan harga tanpa tombol pesan. Hubungi melalui menu Kontak. */
 
     /* =====================================================
