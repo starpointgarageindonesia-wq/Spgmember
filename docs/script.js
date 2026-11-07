@@ -183,33 +183,44 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    /* Pencarian cepat berdasarkan nama produk dan kategori di Menu Lainnya. */
-    const ciCatalogSearch = document.getElementById("ciCatalogSearch");
-    const ciCatalogEmpty = document.getElementById("ciCatalogEmpty");
+    /* Dua katalog terpisah, masing-masing dengan pencarian dalam halamannya sendiri. */
+    document.querySelectorAll(".ci-catalog-section").forEach(section => {
+        const input = section.querySelector(".ci-catalog-search-input");
+        const empty = section.querySelector(".ci-catalog-empty");
+        const groups = Array.from(section.querySelectorAll(".ci-catalog-group"));
+        if (!input || !empty || !groups.length) return;
 
-    if (ciCatalogSearch && ciCatalogEmpty) {
-        const groups = Array.from(document.querySelectorAll("#lainnya .ci-catalog-group"));
+        const filterProducts = () => {
+            const q = input.value.toLocaleLowerCase("id").trim();
+            let visibleTotal = 0;
 
-        function filterCatalog() {
-            const q = ciCatalogSearch.value.toLocaleLowerCase("id").trim();
-            let totalShown = 0;
             groups.forEach(group => {
-                let shown = 0;
-                group.querySelectorAll(".ci-catalog-card").forEach(card => {
-                    const title = (card.dataset.ciName || "").toLocaleLowerCase("id");
-                    const category = (group.dataset.ciGroup || "").toLocaleLowerCase("id");
-                    const match = !q || title.includes(q) || category.includes(q);
-                    card.hidden = !match;
-                    if (match) shown++;
-                });
-                group.hidden = shown === 0;
-                totalShown += shown;
-            });
-            ciCatalogEmpty.hidden = totalShown !== 0;
-        }
+                const categoryName = (group.dataset.ciGroup || "").toLocaleLowerCase("id");
+                let visibleHere = 0;
 
-        ciCatalogSearch.addEventListener("input", filterCatalog);
-        filterCatalog();
+                group.querySelectorAll(".ci-catalog-card").forEach(card => {
+                    const productName = (card.dataset.ciName || "").toLocaleLowerCase("id");
+                    const matched = !q || productName.includes(q) || categoryName.includes(q);
+                    card.hidden = !matched;
+                    if (matched) visibleHere++;
+                });
+
+                group.hidden = visibleHere === 0;
+                visibleTotal += visibleHere;
+            });
+
+            empty.hidden = visibleTotal > 0;
+        };
+
+        input.addEventListener("input", filterProducts);
+        filterProducts();
+    });
+
+    /* Old links to the previously separate Menu Lainnya page lead to the
+       combined Cireng & Camilan page. */
+    if (window.location.hash === "#lainnya") {
+        history.replaceState(null, "", "#cireng");
+        showSlide("#cireng");
     }
 
     /* Dokumentasi owner dan tenant — slideshow header Home */
