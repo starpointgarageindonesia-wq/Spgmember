@@ -2230,3 +2230,7 @@ body{padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-reduced-motion:reduce){
   .ci-catalog-section .ci-catalog-card{transition:none}
 }
+
+/* Paket links no longer display decorative arrow icons. */
+.ci-paket-action{justify-content:center;text-align:center}
+.ci-story-bottom{justify-content:center}
