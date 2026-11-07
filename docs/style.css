@@ -2526,3 +2526,37 @@ body{
   transform:none!important;
   transition:none!important;
 }
+
+
+/* CIRENG MOTION FINISHING PATCH */
+@media(hover:hover) and (pointer:fine){
+  .ci-motion-enabled .ci-catalog-card.ci-reveal.ci-inview:hover{
+    transform:translate3d(0,-4px,0);
+  }
+  .ci-motion-enabled .ci-paket-card.ci-reveal.ci-inview:hover{
+    transform:translate3d(0,-3px,0);
+  }
+}
+@keyframes ci-food-photo-breathe{
+  0%{transform:scale(1); }
+  100%{transform:scale(1.045);}
+}
+/* Just one gently moving food photo per catalog on touch devices. */
+@media(hover:none){
+  #cireng.slide.active .ci-catalog-group:first-of-type .ci-catalog-card:first-child .ci-catalog-photo img,
+  #nugget-jamu.slide.active .ci-catalog-group:first-of-type .ci-catalog-card:first-child .ci-catalog-photo img{
+    animation:ci-food-photo-breathe 12s ease-in-out infinite alternate;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #cireng.slide.active .ci-catalog-photo img,
+  #nugget-jamu.slide.active .ci-catalog-photo img{animation:none!important;}
+}
+.ci-save-data .ci-catalog-photo img{animation:none!important;}
+.ci-page-paused .slide.active::before,
+.ci-page-paused .slide.active::after,
+.ci-page-paused .brand-header::before,
+.ci-page-paused .ci-catalog-heading::after,
+.ci-page-paused .ci-catalog-photo img{
+  animation-play-state:paused!important;
+}
