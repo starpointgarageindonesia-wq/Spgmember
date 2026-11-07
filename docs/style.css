@@ -2586,3 +2586,49 @@ body{
 @media(max-width:699px){
  .ci-price-note{font-size:9.5px;line-height:1.45}
 }
+
+
+/* CIRENG INDI OFFICIAL CONTACT LOGOS
+   Brand marks remain true to their original shapes and colors. */
+.contact-icon.location.ci-official-map-badge,
+.maps-pin.ci-official-map-badge{
+  background:#fff;
+  color:inherit;
+  border:1px solid #eadfce;
+  box-shadow:0 2px 7px rgba(65,39,25,.10);
+}
+.ci-maps-logo{
+  display:block;
+  height:28px;
+  width:auto;
+  max-width:28px;
+  object-fit:contain;
+  flex:0 0 auto;
+}
+.contact-icon.location .ci-maps-logo,
+.maps-pin .ci-maps-logo{
+  width:20px;
+  height:29px;
+}
+.ci-visit-address>.ci-maps-logo{
+  height:23px;
+  width:16px;
+  max-width:16px;
+  flex:0 0 16px;
+  margin-top:1px;
+}
+/* The map link uses the official Google mark, not a generic red pin. */
+#kontak .maps-placeholder{
+  background:linear-gradient(135deg,#fffaf1,#f6ede0);
+  border:1px solid #f0e4d6;
+}
+#kontak .maps-pin{flex-shrink:0;}
+#kontak .contact-icon.whatsapp,
+#kontak .contact-icon.instagram,
+#kontak .contact-icon.clock{
+  box-shadow:0 2px 6px rgba(53,31,20,.08);
+}
+@media(max-width:699px){
+  .contact-icon.location .ci-maps-logo,
+  .maps-pin .ci-maps-logo{height:27px;width:19px}
+}
