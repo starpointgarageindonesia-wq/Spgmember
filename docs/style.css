@@ -2632,3 +2632,221 @@ body{
   .contact-icon.location .ci-maps-logo,
   .maps-pin .ci-maps-logo{height:27px;width:19px}
 }
+
+
+/* CIRENG INDI VISIBLE AMBIENT BACKGROUND V2
+   More visible, warm food-inspired atmospheric motion.
+   Decorative only: never covers content, product photos or controls. */
+.slide.active{
+  position:relative;
+  isolation:isolate;
+  background:
+    radial-gradient(ellipse at 16% 8%,rgba(255,211,132,.52),transparent 32%),
+    radial-gradient(ellipse at 92% 36%,rgba(248,176,133,.33),transparent 32%),
+    radial-gradient(ellipse at 5% 73%,rgba(246,190,92,.30),transparent 36%),
+    linear-gradient(125deg,#fff6e5 0%,#f8e6d5 27%,#fff1d7 53%,#f9e2d7 79%,#fff8e9 100%);
+  background-size:130% 130%,135% 135%,140% 140%,250% 250%;
+  animation:ci-visible-background-shift 15s ease-in-out infinite alternate;
+}
+@keyframes ci-visible-background-shift{
+  0%{background-position:0% 0%,100% 4%,0% 75%,0% 50%;}
+  50%{background-position:18% 9%,78% 39%,30% 90%,52% 50%;}
+  100%{background-position:36% 12%,60% 65%,48% 100%,100% 50%;}
+}
+/* The moving color wash remains visible even on short pages. */
+.slide.active::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset:0;
+  opacity:.78;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 5% 27%,rgba(255,190,79,.30),transparent 26%),
+    radial-gradient(circle at 97% 73%,rgba(194,53,41,.15),transparent 29%),
+    radial-gradient(circle at 58% 53%,rgba(255,247,213,.40),transparent 35%);
+  transform:translate3d(0,0,0);
+  animation:ci-ambient-drift 13s ease-in-out infinite alternate;
+}
+.slide.active::after{
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset:auto 2% 9% auto;
+  width:clamp(120px,22vw,280px);
+  height:clamp(120px,22vw,280px);
+  pointer-events:none;
+  border-radius:50%;
+  opacity:.67;
+  background:radial-gradient(circle,rgba(255,196,91,.42),rgba(255,229,155,.10) 48%,transparent 75%);
+  animation:ci-glow-float 11s ease-in-out infinite alternate;
+}
+.slide.active > *:not(.ci-bg-scene){
+  position:relative;
+  z-index:2;
+}
+.slide.active > .ci-bg-scene{
+  position:absolute!important;
+  z-index:1!important;
+  inset:0;
+  overflow:hidden;
+  isolation:isolate;
+  pointer-events:none;
+}
+.ci-bg-scene span{position:absolute;display:block;pointer-events:none;}
+.ci-bg-orb{
+  border-radius:50%;
+  mix-blend-mode:multiply;
+  transform:translate3d(0,0,0);
+  will-change:transform;
+}
+.ci-bg-orb-a{
+  width:clamp(150px,31vw,410px);
+  height:clamp(150px,31vw,410px);
+  top:3%;
+  right:-7%;
+  opacity:.66;
+  background:radial-gradient(circle at 38% 37%,rgba(255,218,104,.75),rgba(234,156,59,.21) 50%,rgba(238,162,62,0) 72%);
+  animation:ci-orb-dance-a 12s ease-in-out infinite alternate;
+}
+.ci-bg-orb-b{
+  width:clamp(200px,34vw,470px);
+  height:clamp(200px,34vw,470px);
+  top:42%;
+  left:-10%;
+  opacity:.62;
+  background:radial-gradient(circle at 54% 50%,rgba(229,100,67,.38),rgba(244,180,98,.27) 47%,transparent 74%);
+  animation:ci-orb-dance-b 15s ease-in-out infinite alternate;
+}
+.ci-bg-orb-c{
+  width:clamp(170px,33vw,420px);
+  height:clamp(170px,33vw,420px);
+  bottom:3%;
+  right:2%;
+  opacity:.63;
+  background:radial-gradient(circle at 50% 44%,rgba(255,206,99,.65),rgba(255,177,114,.18) 52%,transparent 73%);
+  animation:ci-orb-dance-c 14s ease-in-out infinite alternate;
+}
+.ci-bg-ripple{
+  width:clamp(190px,36vw,520px);
+  height:clamp(190px,36vw,520px);
+  border-radius:50%;
+  top:63%;
+  right:-17%;
+  border:2px solid rgba(196,119,67,.12);
+  box-shadow:0 0 0 36px rgba(245,174,81,.035),0 0 0 74px rgba(245,174,81,.025);
+  animation:ci-orb-dance-a 16s ease-in-out infinite alternate-reverse;
+}
+.ci-bg-grain{
+  inset:0;
+  opacity:.20;
+  background-image:radial-gradient(circle,rgba(152,86,47,.26) 1.1px,transparent 1.5px);
+  background-size:36px 36px;
+  background-position:8px 8px;
+  animation:ci-grain-shift 22s linear infinite;
+}
+@keyframes ci-orb-dance-a{
+  from{transform:translate3d(-38px,0,0) scale(.91);}
+  to{transform:translate3d(55px,55px,0) scale(1.13);}
+}
+@keyframes ci-orb-dance-b{
+  from{transform:translate3d(-22px,-42px,0) scale(1.12);}
+  to{transform:translate3d(55px,45px,0) scale(.91);}
+}
+@keyframes ci-orb-dance-c{
+  from{transform:translate3d(22px,42px,0) scale(.90);}
+  to{transform:translate3d(-52px,-35px,0) scale(1.14);}
+}
+@keyframes ci-grain-shift{
+  from{background-position:8px 8px;}
+  to{background-position:80px 80px;}
+}
+/* Visible softly animated color panels behind category headings. */
+.ci-catalog-section .ci-catalog-heading{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  max-width:none;
+  margin:0 0 32px;
+  padding:23px 28px 24px;
+  border:1px solid rgba(225,167,98,.31);
+  border-radius:22px;
+  background:linear-gradient(115deg,rgba(255,249,236,.88),rgba(255,230,187,.67),rgba(255,246,226,.87));
+  background-size:240% 100%;
+  animation:ci-heading-sunlight 9s ease-in-out infinite alternate;
+  box-shadow:0 10px 28px rgba(155,91,32,.07);
+}
+@keyframes ci-heading-sunlight{
+  from{background-position:0% 50%;}
+  to{background-position:100% 50%;}
+}
+.ci-catalog-section .ci-catalog-heading::after{margin-top:15px;}
+/* Keep the motion visible in the spacing between product groups. */
+.ci-catalog-section .ci-catalog-group{
+  position:relative;
+}
+.ci-catalog-section .ci-catalog-group::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset:-11px -9px -8px;
+  border-radius:19px;
+  pointer-events:none;
+  background:linear-gradient(132deg,rgba(255,253,247,.48),rgba(255,237,205,.27),rgba(255,249,234,.48));
+  border:1px solid rgba(235,198,157,.16);
+}
+.ci-catalog-section .ci-catalog-group > *{position:relative;z-index:1;}
+/* Softer luminous finish for other informational pages. */
+#tentang .ci-home-about .about-card,
+#kontak .contact-card{
+  background:linear-gradient(145deg,rgba(255,253,246,.97),rgba(255,244,225,.97),rgba(255,252,242,.98));
+  background-size:180% 180%;
+  animation:ci-heading-sunlight 17s ease-in-out infinite alternate;
+}
+@media(max-width:699px){
+  .slide.active{
+    background:
+      radial-gradient(circle at 92% 12%,rgba(255,205,118,.47),transparent 42%),
+      radial-gradient(circle at 2% 76%,rgba(231,111,78,.23),transparent 40%),
+      linear-gradient(135deg,#fff6e5,#f8e8d6,#fff2e0,#f9e4d9);
+    background-size:160% 160%,155% 155%,230% 230%;
+    animation-duration:18s;
+  }
+  .slide.active::before{opacity:.66;}
+  .slide.active::after{display:none;}
+  .ci-bg-orb-a{width:230px;height:230px;right:-62px;top:6%;opacity:.65;}
+  .ci-bg-orb-b{width:260px;height:260px;left:-85px;top:47%;opacity:.57;}
+  .ci-bg-orb-c{width:235px;height:235px;right:-40px;bottom:6%;opacity:.58;}
+  .ci-bg-ripple{width:240px;height:240px;right:-100px;top:66%;}
+  .ci-bg-grain{opacity:.14;background-size:29px 29px;}
+  .ci-catalog-section .ci-catalog-heading{
+    padding:19px 17px 20px;
+    border-radius:17px;
+    margin-bottom:24px;
+  }
+  .ci-catalog-section .ci-catalog-heading::after{margin:13px 0 0;}
+  .ci-catalog-section .ci-catalog-group::before{inset:-7px -5px -7px;}
+}
+/* Don't consume battery or force movement for users who request less motion. */
+@media(prefers-reduced-motion:reduce){
+  .slide.active,.slide.active::before,.slide.active::after,
+  .ci-bg-scene *, .ci-catalog-section .ci-catalog-heading,
+  #tentang .ci-home-about .about-card,#kontak .contact-card{
+    animation:none!important;
+  }
+  .ci-bg-orb{will-change:auto;}
+}
+.ci-save-data .slide.active,
+.ci-save-data .slide.active::before,
+.ci-save-data .slide.active::after,
+.ci-save-data .ci-bg-scene *,
+.ci-save-data .ci-catalog-section .ci-catalog-heading,
+.ci-save-data #tentang .ci-home-about .about-card,
+.ci-save-data #kontak .contact-card{animation:none!important;}
+.ci-page-paused .slide.active,
+.ci-page-paused .slide.active::before,
+.ci-page-paused .slide.active::after,
+.ci-page-paused .ci-bg-scene *,
+.ci-page-paused .ci-catalog-section .ci-catalog-heading,
+.ci-page-paused #tentang .ci-home-about .about-card,
+.ci-page-paused #kontak .contact-card{animation-play-state:paused!important;}
