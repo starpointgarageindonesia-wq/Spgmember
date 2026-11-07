@@ -2234,3 +2234,71 @@ body{padding-bottom:env(safe-area-inset-bottom,0px)}
 /* Paket links no longer display decorative arrow icons. */
 .ci-paket-action{justify-content:center;text-align:center}
 .ci-story-bottom{justify-content:center}
+
+
+/* TWO PAGE CATALOG NAVIGATION 2026
+   Five total navigation tabs with two balanced catalog pages.
+   Category headings remain visible within each page. */
+.bottom-nav{
+  grid-template-columns:repeat(5,minmax(0,1fr));
+}
+.bottom-nav .nav-item{
+  min-width:0;
+  padding-inline:7px;
+  gap:5px;
+}
+.bottom-nav .nav-item>span:last-child{
+  display:block;
+  max-width:100%;
+  line-height:1.28;
+  text-align:center;
+  overflow-wrap:normal;
+  text-wrap:balance;
+}
+.ci-catalog-section .ci-catalog-group{
+  margin-bottom:clamp(26px,3.3vw,42px);
+}
+.ci-catalog-section .ci-catalog-group:last-of-type{
+  margin-bottom:12px;
+}
+.ci-catalog-section .ci-catalog-subheading{
+  margin-top:0;
+  padding-top:8px;
+  border-bottom:1px solid #e7d4b8;
+}
+.ci-catalog-section .ci-catalog-heading + .ci-catalog-search{
+  margin-bottom:30px;
+}
+.ci-catalog-section .ci-catalog-group[hidden]{
+  display:none!important;
+}
+@media(min-width:700px) {
+  .bottom-nav .nav-item{
+    font-size:clamp(11px,1.2vw,14px);
+    flex-direction:column;
+    justify-content:center;
+  }
+}
+@media(max-width:699px){
+  .bottom-nav{
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:3px;
+  }
+  .bottom-nav .nav-item{
+    padding:7px 3px;
+    font-size:10px;
+  }
+  .bottom-nav .nav-item .nav-icon{
+    flex:none;
+    margin-bottom:2px;
+  }
+  .ci-catalog-section .ci-catalog-group{
+    margin-bottom:28px;
+  }
+}
+@media(max-width:360px){
+  .bottom-nav .nav-item{
+    font-size:9px;
+    padding-inline:2px;
+  }
+}
