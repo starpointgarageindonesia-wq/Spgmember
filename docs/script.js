@@ -123,90 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    /* =====================================================
-       WHATSAPP
-    ===================================================== */
-
-    const whatsappNumber = "6282254710903";
-
-    function openWhatsApp(message) {
-
-        const encodedMessage =
-            encodeURIComponent(message);
-
-        const url =
-            `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
-
-        window.open(
-            url,
-            "_blank",
-            "noopener,noreferrer"
-        );
-    }
-
-
-    /* =====================================================
-       PRODUCT ORDER BUTTON
-    ===================================================== */
-
-    const orderButtons =
-        document.querySelectorAll(".order-btn");
-
-    orderButtons.forEach((button) => {
-
-        button.addEventListener("click", () => {
-
-            const card =
-                button.closest(".product-card");
-
-            if (!card) return;
-
-            const productName =
-                card.querySelector("h3")?.textContent.trim()
-                || "Produk Cireng Indi";
-
-            const price =
-                card.querySelector(".price")?.textContent.trim()
-                || "";
-
-            const select =
-                card.querySelector("select");
-
-            let option = "";
-
-            if (select) {
-                option =
-                    select.options[
-                        select.selectedIndex
-                    ]?.textContent.trim()
-                    || "";
-            }
-
-            let message =
-                `Halo Cireng Indi, saya ingin memesan:\n\n` +
-                `Produk: ${productName}`;
-
-            if (option) {
-                message +=
-                    `\nPilihan: ${option}`;
-            }
-
-            if (price) {
-                message +=
-                    `\nHarga: ${price}`;
-            }
-
-            message +=
-                `\n\nMohon informasi selanjutnya. Terima kasih.`;
-
-            openWhatsApp(message);
-
-        });
-
-    });
-
-
-    /* WhatsApp links retain the phone numbers in original HTML. */
+    /* Katalog produk menampilkan harga tanpa tombol pesan. Hubungi melalui menu Kontak. */
 
     /* =====================================================
        INSTAGRAM
@@ -266,114 +183,34 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    /* =====================================================
-       SELECT PRODUK
-       UPDATE HARGA OTOMATIS
-    ===================================================== */
+    /* Pencarian cepat berdasarkan nama produk dan kategori di Menu Lainnya. */
+    const ciCatalogSearch = document.getElementById("ciCatalogSearch");
+    const ciCatalogEmpty = document.getElementById("ciCatalogEmpty");
 
-    const productCards =
-        document.querySelectorAll(".product-card");
+    if (ciCatalogSearch && ciCatalogEmpty) {
+        const groups = Array.from(document.querySelectorAll("#lainnya .ci-catalog-group"));
 
-    productCards.forEach((card) => {
-
-        const select =
-            card.querySelector("select");
-
-        const priceElement =
-            card.querySelector(".price");
-
-        if (!select || !priceElement) {
-            return;
+        function filterCatalog() {
+            const q = ciCatalogSearch.value.toLocaleLowerCase("id").trim();
+            let totalShown = 0;
+            groups.forEach(group => {
+                let shown = 0;
+                group.querySelectorAll(".ci-catalog-card").forEach(card => {
+                    const title = (card.dataset.ciName || "").toLocaleLowerCase("id");
+                    const category = (group.dataset.ciGroup || "").toLocaleLowerCase("id");
+                    const match = !q || title.includes(q) || category.includes(q);
+                    card.hidden = !match;
+                    if (match) shown++;
+                });
+                group.hidden = shown === 0;
+                totalShown += shown;
+            });
+            ciCatalogEmpty.hidden = totalShown !== 0;
         }
 
-        function updatePrice() {
-
-            const selectedOption =
-                select.options[
-                    select.selectedIndex
-                ];
-
-            if (!selectedOption) return;
-
-            const price = selectedOption.dataset.price ||
-                (selectedOption.value.match(/Rp\s*[\d.]+/) || [])[0];
-
-            if (price) {
-                priceElement.textContent =
-                    price;
-            }
-        }
-
-        select.addEventListener(
-            "change",
-            updatePrice
-        );
-
-        updatePrice();
-
-    });
-
-
-    /* =====================================================
-       KEYBOARD ACCESS
-       ← → UNTUK PINDAH SLIDE
-    ===================================================== */
-
-    document.addEventListener("keydown", (event) => {
-
-        if (
-            event.key !== "ArrowLeft" &&
-            event.key !== "ArrowRight"
-        ) {
-            return;
-        }
-
-        const activeSlide =
-            document.querySelector(".slide.active");
-
-        if (!activeSlide) return;
-
-        const currentIndex =
-            Array.from(slides).indexOf(activeSlide);
-
-        let nextIndex = currentIndex;
-
-        if (event.key === "ArrowRight") {
-            nextIndex =
-                Math.min(
-                    currentIndex + 1,
-                    slides.length - 1
-                );
-        }
-
-        if (event.key === "ArrowLeft") {
-            nextIndex =
-                Math.max(
-                    currentIndex - 1,
-                    0
-                );
-        }
-
-        const nextSlide =
-            slides[nextIndex];
-
-        if (nextSlide) {
-
-            const target =
-                `#${nextSlide.id}`;
-
-            showSlide(target);
-
-            history.replaceState(
-                null,
-                "",
-                target
-            );
-        }
-
-    });
-
-
+        ciCatalogSearch.addEventListener("input", filterCatalog);
+        filterCatalog();
+    }
 
     /* Dokumentasi owner dan tenant — slideshow header Home */
     const ciStoryCarousel = document.getElementById("ciOwnerTenantSlider");
