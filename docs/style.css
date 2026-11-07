@@ -1935,3 +1935,298 @@ body{padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-reduced-motion:reduce){
   .ci-paket-card,.ci-paket-action{transition:none!important}
 }
+
+
+/* CIRENG INDI CATALOG 2026
+   Product pages are read-only catalogs, not checkout cards.
+   Consistent photography, sizes, prices and grouped menus. */
+.ci-catalog-section{
+  padding-top:clamp(25px,3.2vw,44px);
+  padding-bottom:calc(110px + env(safe-area-inset-bottom,0px));
+}
+.ci-catalog-heading{
+  text-align:center;
+  margin:0 auto clamp(22px,3vw,33px);
+  max-width:660px;
+}
+.ci-catalog-eyebrow{
+  color:#b79337;
+  font-size:10px;
+  letter-spacing:.18em;
+  font-weight:800;
+  line-height:1.5;
+}
+.ci-catalog-heading h2{
+  font-family:'Playfair Display',Georgia,serif;
+  font-weight:700;
+  line-height:1.1;
+  letter-spacing:-.6px;
+  color:#950d18;
+  font-size:clamp(30px,3.7vw,45px);
+  margin:9px 0 12px;
+}
+.ci-catalog-heading>p{
+  margin:auto;
+  font-size:clamp(12px,1.3vw,15px);
+  line-height:1.68;
+  color:#725d52;
+}
+.ci-catalog-subheading{
+  display:flex;
+  align-items:baseline;
+  flex-wrap:wrap;
+  gap:8px 15px;
+  border-bottom:1px solid #e8d4b7;
+  margin:33px 0 19px;
+  padding-bottom:12px;
+}
+.ci-catalog-subheading h3{
+  color:#9c141d;
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:clamp(21px,2.5vw,28px);
+  margin:0;
+  font-weight:700;
+}
+.ci-catalog-subheading p{
+  font-size:12px;
+  color:#897469;
+  line-height:1.45;
+  margin:0;
+}
+.ci-catalog-section .ci-catalog-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  align-items:stretch;
+  gap:17px;
+  width:100%;
+}
+.ci-catalog-section .ci-catalog-card{
+  display:flex;
+  min-width:0;
+  flex-direction:column;
+  overflow:hidden;
+  border-radius:18px;
+  background:#fffdf7;
+  border:1px solid #ebd9c4;
+  box-shadow:0 6px 17px rgba(83,46,22,.07);
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+.ci-catalog-section .ci-catalog-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 13px 26px rgba(88,44,22,.11);
+}
+.ci-catalog-section .ci-catalog-photo{
+  width:100%;
+  aspect-ratio:1/0.93;
+  overflow:hidden;
+  background:#f4e8d7;
+}
+.ci-catalog-section .ci-catalog-photo img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+}
+.ci-catalog-section .ci-catalog-body{
+  padding:16px 15px;
+  display:flex;
+  flex-direction:column;
+  flex:1;
+  gap:0;
+}
+.ci-catalog-type{
+  display:inline-block;
+  align-self:flex-start;
+  border-radius:999px;
+  background:#f8eee0;
+  padding:5px 9px;
+  font-size:10px;
+  font-weight:800;
+  color:#a3733b;
+  letter-spacing:.025em;
+  line-height:1.4;
+}
+.ci-catalog-section .ci-catalog-body h3{
+  font-family:'Playfair Display',Georgia,serif;
+  color:#8c0e16;
+  font-size:clamp(17px,1.6vw,21px);
+  font-weight:700;
+  line-height:1.22;
+  min-height:0;
+  margin:12px 0 7px;
+}
+.ci-catalog-section .ci-catalog-body .ci-catalog-desc{
+  margin:0 0 10px;
+  font-size:12px;
+  line-height:1.6;
+  color:#6b5a51;
+}
+.ci-catalog-section .ci-catalog-body .ci-catalog-pack{
+  display:block;
+  align-self:flex-start;
+  background:#fff1dc;
+  border:1px solid #f0d5ae;
+  color:#8b613c;
+  padding:6px 9px;
+  border-radius:9px;
+  margin:0 0 11px;
+  font-size:11px;
+  line-height:1.35;
+  font-weight:700;
+}
+.ci-catalog-price{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:9px;
+  padding:11px 0 0;
+  margin-top:auto;
+  border-top:1px solid #eddcca;
+}
+.ci-catalog-price span{
+  font-size:10px;
+  line-height:1.45;
+  color:#9e8a7d;
+}
+.ci-catalog-price strong{
+  font-family:'DM Sans',sans-serif;
+  color:#aa0f19;
+  font-size:clamp(14px,1.35vw,18px);
+  line-height:1.35;
+  white-space:nowrap;
+  letter-spacing:-.4px;
+}
+.ci-catalog-variants{
+  display:flex;
+  flex-direction:column;
+  border-top:1px solid #eddcca;
+  padding-top:5px;
+  margin-top:auto;
+}
+.ci-catalog-variant{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding:7px 0;
+  border-bottom:1px solid #f1e7db;
+  color:#685950;
+  font-size:11px;
+  line-height:1.4;
+}
+.ci-catalog-variant:last-child{border-bottom:0;padding-bottom:0}
+.ci-catalog-variant strong{
+  color:#a50d19;
+  font-size:12px;
+  white-space:nowrap;
+  text-align:right;
+  letter-spacing:-.15px;
+}
+.ci-catalog-notice{
+  max-width:800px;
+  margin:25px auto 0;
+  padding:12px 16px;
+  border-radius:12px;
+  color:#7f5b39;
+  background:#f8ecd9;
+  border:1px solid #ebd9bd;
+  text-align:center;
+  font-size:12px;
+  line-height:1.6;
+}
+.ci-catalog-search{
+  height:49px;
+  max-width:540px;
+  margin:0 auto 27px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  border:1px solid #e1cbb1;
+  border-radius:14px;
+  background:#fffdf9;
+  padding:0 15px;
+  box-shadow:0 3px 12px rgba(92,55,29,.035);
+}
+.ci-catalog-search:focus-within{
+  border-color:#ae7b3b;
+  outline:2px solid rgba(196,148,67,.15);
+}
+.ci-catalog-search-icon{
+  width:20px;height:20px;flex:0 0 20px;color:#a47238;
+}
+.ci-catalog-search input{
+  width:100%;
+  min-width:0;
+  border:0;
+  outline:none;
+  background:none;
+  color:#46332c;
+  font-family:'DM Sans',sans-serif;
+  font-size:13px;
+}
+.ci-catalog-search input::placeholder{color:#9e8b7e}
+.ci-catalog-empty{
+  border-radius:14px;
+  background:#fff5e8;
+  color:#87512e;
+  font-size:13px;
+  text-align:center;
+  padding:22px;
+  margin:15px 0 25px;
+}
+.ci-catalog-group{margin:0 0 28px}
+.ci-catalog-group[hidden],
+.ci-catalog-card[hidden],
+.ci-catalog-empty[hidden]{display:none!important}
+.sr-only{
+  position:absolute!important;
+  width:1px;height:1px;overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+}
+/* The last page is still accessible from the fixed bottom navigation. */
+@media(min-width:700px) and (max-width:1080px){
+  .ci-catalog-section .ci-catalog-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:14px;
+  }
+}
+@media(max-width:699px){
+  .ci-catalog-section{padding:27px 16px calc(104px + env(safe-area-inset-bottom,0px))}
+  .ci-catalog-heading{text-align:left;margin-bottom:22px}
+  .ci-catalog-heading h2{font-size:30px;margin:7px 0 10px}
+  .ci-catalog-heading>p{font-size:12px}
+  .ci-catalog-subheading{margin:28px 0 14px}
+  .ci-catalog-subheading h3{font-size:21px}
+  .ci-catalog-subheading p{font-size:11px}
+  .ci-catalog-section .ci-catalog-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:11px;
+  }
+  .ci-catalog-section .ci-catalog-card{border-radius:15px}
+  .ci-catalog-section .ci-catalog-photo{aspect-ratio:1/0.88}
+  .ci-catalog-section .ci-catalog-body{padding:12px 11px}
+  .ci-catalog-type{font-size:9px;padding:4px 7px}
+  .ci-catalog-section .ci-catalog-body h3{font-size:16px;line-height:1.25;margin:9px 0 6px}
+  .ci-catalog-section .ci-catalog-body .ci-catalog-desc{font-size:10.5px;line-height:1.52;margin-bottom:10px}
+  .ci-catalog-section .ci-catalog-body .ci-catalog-pack{font-size:9.5px;padding:5px 6px}
+  .ci-catalog-price{display:flex;flex-wrap:wrap;align-items:flex-start;gap:4px;padding-top:10px}
+  .ci-catalog-price span{width:100%;font-size:9px}
+  .ci-catalog-price strong{font-size:15px}
+  .ci-catalog-variant{font-size:10px;gap:5px;flex-wrap:wrap;padding:5px 0}
+  .ci-catalog-variant strong{font-size:11px}
+  .ci-catalog-notice{font-size:10.5px;text-align:left}
+  .ci-catalog-search{height:45px;margin-bottom:22px}
+  .ci-catalog-search input{font-size:12px}
+  .ci-catalog-group{margin-bottom:21px}
+}
+@media(max-width:345px){
+  .ci-catalog-section .ci-catalog-grid{grid-template-columns:minmax(0,1fr)}
+  .ci-catalog-section .ci-catalog-body h3{font-size:20px}
+  .ci-catalog-section .ci-catalog-body .ci-catalog-desc{font-size:12px}
+  .ci-catalog-variant strong{font-size:13px}
+}
+@media(prefers-reduced-motion:reduce){
+  .ci-catalog-section .ci-catalog-card{transition:none}
+}
