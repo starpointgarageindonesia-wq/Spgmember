@@ -2302,3 +2302,227 @@ body{padding-bottom:env(safe-area-inset-bottom,0px)}
     padding-inline:2px;
   }
 }
+
+
+/* CIRENG INDI AMBIENT MOTION 2026
+   A restrained, warm and appetite-focused animated visual layer.
+   CSS-only ambient effects; the product photographs remain original. */
+:root{
+  --ci-glow-caramel:rgba(246,174,74,.22);
+  --ci-glow-cream:rgba(255,239,189,.34);
+  --ci-glow-berry:rgba(178,24,37,.095);
+}
+body{
+  background:
+    radial-gradient(ellipse at 12% 18%,#fff3db 0%,transparent 52%),
+    radial-gradient(ellipse at 85% 80%,#f2dfcd 0%,transparent 52%),
+    #f5eee3;
+}
+.app{
+  background:linear-gradient(155deg,#f9f1e6 0%,#f7efe3 40%,#f8f0e7 100%);
+}
+.slide.active{
+  position:relative;
+  isolation:isolate;
+}
+.slide.active::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse 27% 280px at 12% 13%,var(--ci-glow-caramel),transparent 90%),
+    radial-gradient(ellipse 28% 420px at 91% 47%,var(--ci-glow-cream),transparent 90%),
+    radial-gradient(ellipse 22% 280px at 35% 79%,var(--ci-glow-berry),transparent 95%);
+  transform-origin:center 40%;
+  animation:ci-ambient-drift 19s ease-in-out infinite alternate;
+}
+.slide.active::after{
+  content:"";
+  position:absolute;
+  z-index:0;
+  pointer-events:none;
+  top:50px;right:1.5%;
+  width:min(28vw,290px);
+  height:min(28vw,290px);
+  border-radius:50%;
+  opacity:.6;
+  background:radial-gradient(circle,rgba(255,209,133,.21),rgba(255,209,133,0) 72%);
+  animation:ci-glow-float 16s ease-in-out infinite alternate;
+}
+.slide.active > *{
+  position:relative;
+  z-index:1;
+}
+@keyframes ci-ambient-drift{
+  0%{transform:translate3d(-1.2%,0,0) scale(1);}
+  50%{transform:translate3d(1.4%,-.3%,0) scale(1.02);}
+  100%{transform:translate3d(-.5%,.7%,0) scale(1);}
+}
+@keyframes ci-glow-float{
+  0%{transform:translate3d(0,0,0) scale(.9);opacity:.38;}
+  100%{transform:translate3d(-45px,65px,0) scale(1.15);opacity:.7;}
+}
+
+/* A soft highlight passes over the brand's existing red header. */
+.brand-header{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+}
+.brand-header::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(108deg,transparent 28%,rgba(255,232,169,.12) 48%,transparent 67%);
+  transform:translate3d(-110%,0,0);
+  animation:ci-header-glint 16s ease-in-out infinite;
+}
+.brand-header > *{position:relative;z-index:1;}
+@keyframes ci-header-glint{
+  0%,24%,100%{transform:translate3d(-110%,0,0);}
+  50%,68%{transform:translate3d(110%,0,0);}
+}
+
+/* Catalog headings get a gentle golden flourish; no extra numbers/arrows. */
+.ci-catalog-heading h2{
+  text-wrap:balance;
+}
+.ci-catalog-heading::after{
+  content:"";
+  display:block;
+  width:76px;
+  height:4px;
+  border-radius:999px;
+  background:linear-gradient(90deg,#ab111e,#f4be4c,#b41420);
+  background-size:180% 100%;
+  margin:19px auto 0;
+  animation:ci-golden-glimmer 8s ease-in-out infinite alternate;
+}
+@keyframes ci-golden-glimmer{
+  from{background-position:0% 50%;opacity:.8;}
+  to{background-position:100% 50%;opacity:1;}
+}
+
+/* Real food photos lead the experience. The treatment enhances clarity
+   without substituting or inventing food images. */
+.ci-catalog-section .ci-catalog-photo{
+  position:relative;
+  isolation:isolate;
+}
+.ci-catalog-section .ci-catalog-photo img{
+  filter:saturate(1.035) contrast(1.018);
+  transform:scale(1);
+  transition:transform .65s cubic-bezier(.2,.75,.2,1),filter .45s ease;
+}
+.ci-catalog-section .ci-catalog-photo::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  opacity:0;
+  transform:translate3d(-60%,0,0);
+  background:linear-gradient(110deg,transparent 15%,rgba(255,245,220,.24) 50%,transparent 82%);
+  transition:transform .8s ease,opacity .4s ease;
+}
+.ci-catalog-section .ci-catalog-card{
+  transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;
+}
+@media(hover:hover) and (pointer:fine){
+  .ci-catalog-section .ci-catalog-card:hover{
+    border-color:#e0b67a;
+    box-shadow:0 15px 30px rgba(113,54,31,.13);
+  }
+  .ci-catalog-section .ci-catalog-card:hover .ci-catalog-photo img{
+    transform:scale(1.065);
+    filter:saturate(1.09) contrast(1.025);
+  }
+  .ci-catalog-section .ci-catalog-card:hover .ci-catalog-photo::after{
+    opacity:1;
+    transform:translate3d(60%,0,0);
+  }
+  .ci-catalog-section .ci-catalog-card:hover .ci-catalog-price strong,
+  .ci-catalog-section .ci-catalog-card:hover .ci-catalog-variant strong{
+    color:#c31422;
+  }
+}
+.ci-catalog-subheading h3{
+  position:relative;
+  padding-left:14px;
+}
+.ci-catalog-subheading h3::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:21%;
+  width:4px;
+  height:62%;
+  border-radius:99px;
+  background:linear-gradient(#efbf5b,#b11323);
+}
+
+/* Subtle enter-on-scroll for headings, products, photographs and package cards.
+   Progressive enhancement: without JS all content remains visible. */
+.ci-motion-enabled .ci-reveal:not(.ci-inview){
+  opacity:0;
+  transform:translate3d(0,17px,0);
+}
+.ci-motion-enabled .ci-reveal{
+  transition:
+    opacity .7s cubic-bezier(.2,.7,.2,1),
+    transform .7s cubic-bezier(.2,.7,.2,1);
+  transition-delay:var(--ci-reveal-delay,0ms);
+}
+.ci-motion-enabled .ci-reveal.ci-inview{
+  opacity:1;
+  transform:translate3d(0,0,0);
+}
+.ci-motion-enabled .ci-catalog-card.ci-reveal.ci-inview{
+  /* Maintain existing card hover behavior after the entry reveal. */
+  transition:opacity .7s ease,transform .3s ease,box-shadow .3s ease,border-color .3s ease;
+}
+.ci-motion-enabled .ci-reveal[hidden]{
+  display:none!important;
+}
+
+/* Mobile: preserve 2-column product photos, price legibility and smooth scroll. */
+@media(max-width:699px){
+  .slide.active::before{
+    background:
+      radial-gradient(ellipse 54% 190px at 12% 15%,rgba(245,175,91,.17),transparent 90%),
+      radial-gradient(ellipse 55% 230px at 94% 60%,rgba(255,226,175,.23),transparent 95%);
+    animation-duration:26s;
+  }
+  .slide.active::after{display:none;}
+  .ci-catalog-heading::after{margin:14px 0 0;width:58px;}
+  .ci-catalog-section .ci-catalog-photo img{transition-duration:.45s;}
+}
+
+/* Respect accessibility and devices with reduced motion. */
+@media(prefers-reduced-motion:reduce){
+  .slide.active::before,.slide.active::after,.brand-header::before,
+  .ci-catalog-heading::after{animation:none!important;}
+  .ci-motion-enabled .ci-reveal,
+  .ci-motion-enabled .ci-reveal:not(.ci-inview){
+    opacity:1!important;
+    transform:none!important;
+    transition:none!important;
+  }
+  .ci-catalog-section .ci-catalog-photo img,
+  .ci-catalog-section .ci-catalog-photo::after,
+  .ci-catalog-section .ci-catalog-card{transition:none!important;}
+}
+.ci-save-data .slide.active::before,
+.ci-save-data .slide.active::after,
+.ci-save-data .brand-header::before,
+.ci-save-data .ci-catalog-heading::after{animation:none!important;}
+.ci-save-data .ci-motion-enabled .ci-reveal,
+.ci-save-data .ci-reveal{
+  opacity:1!important;
+  transform:none!important;
+  transition:none!important;
+}
